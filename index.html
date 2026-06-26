@@ -44,17 +44,15 @@ select.field-input{font-size:14px;color:var(--text2)}
 .sdp-logo{margin:-20px -16px 24px;padding:20px 16px 18px;background:var(--blue)}
 .sdp-logo .name{font-size:16px;font-weight:600;color:var(--white)}
 .sdp-logo .sub{font-size:12px;color:rgba(255,255,255,.7);margin-top:2px}
-.eq-chips{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
-.eq-chip{background:var(--white);border:none;border-left:4px solid var(--border);box-shadow:var(--shadow);border-radius:var(--radius);padding:14px 16px 14px 12px;display:flex;align-items:center;justify-content:space-between;user-select:none}
-.eq-chip.on{border-left-color:var(--blue);background:var(--blue-light)}
-.eq-chip-left{display:flex;align-items:center;gap:12px}
-.eq-chip-icon{width:36px;height:36px;border-radius:8px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:18px}
-.eq-chip.on .eq-chip-icon{background:var(--white)}
-.eq-chip-name{font-size:15px;font-weight:500}
+.position-count-card{background:var(--white);border:none;box-shadow:var(--shadow);border-radius:var(--radius);padding:18px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.position-count-name{font-size:15px;font-weight:600}
+.position-count-sub{font-size:12px;color:var(--gray);margin-top:2px}
 .count-ctrl{display:flex;align-items:center;gap:8px}
 .count-btn{width:36px;height:36px;border-radius:50%;border:none;background:var(--blue);font-size:20px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--white);font-weight:300}
 .count-btn:active{opacity:.8}
-.count-val{font-size:16px;font-weight:700;min-width:22px;text-align:center;color:var(--blue)}
+.count-btn:disabled{background:var(--checkbox-border);cursor:default}
+.count-val{font-size:18px;font-weight:700;min-width:26px;text-align:center;color:var(--blue)}
+.position-help{font-size:12px;color:var(--gray);line-height:1.5;margin:10px 2px 20px}
 
 /* ── TEMPLATE SCREEN ── */
 #tmpl-screen{background:var(--surface)}
@@ -72,7 +70,8 @@ select.field-input{font-size:14px;color:var(--text2)}
 .insp-top{background:var(--blue);border-bottom:none;padding:12px 16px 10px;flex-shrink:0}
 .insp-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .nav-meta{font-size:12px;color:rgba(255,255,255,.7)}
-.nav-title{font-size:16px;font-weight:700;color:var(--white)}
+.nav-title{font-size:16px;font-weight:700;color:var(--white);background:transparent;border:none;outline:none;font-family:inherit;padding:0;flex:1;text-align:right;min-width:0}
+.nav-title::placeholder{color:rgba(255,255,255,.6)}
 .progress-row{display:flex;gap:3px}
 .progress-dot{height:3px;border-radius:2px;flex:1;background:rgba(255,255,255,.3)}
 .progress-dot.done{background:rgba(255,255,255,.6)}
@@ -98,6 +97,26 @@ select.field-input{font-size:14px;color:var(--text2)}
 .tmpl-summary{padding:10px 14px}
 .tmpl-summary-row{font-size:13px;color:var(--text2);display:flex;justify-content:space-between;gap:6px;padding:4px 0}
 .tmpl-summary-row span{color:var(--text);font-weight:600}
+
+/* position label + equipment selector */
+.pos-label-card{background:var(--white);border:none;box-shadow:var(--shadow);border-radius:var(--radius);margin-bottom:10px;padding:12px 14px}
+.pos-label-input{width:100%;border:none;background:transparent;font-size:17px;font-weight:700;color:var(--text);font-family:inherit;padding:0;outline:none}
+.pos-label-input::placeholder{color:#cbd5e1}
+.eq-select-row{display:flex;gap:8px;margin-top:10px}
+.eq-pill{flex:1;padding:10px 4px;border:2px solid var(--border);border-radius:var(--radius-sm);background:var(--white);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text2);text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px}
+.eq-pill .eq-pill-icon{font-size:16px}
+.eq-pill.sel-door{background:var(--blue);border-color:var(--blue);color:var(--white)}
+.eq-pill.sel-leveler{background:var(--accent);border-color:var(--accent);color:var(--white)}
+.eq-pill.sel-restraint{background:#7C3AED;border-color:#7C3AED;color:var(--white)}
+.eq-empty-hint{font-size:12px;color:var(--gray);margin-top:10px;text-align:center;padding:8px;background:var(--surface);border-radius:var(--radius-sm)}
+
+/* per-equipment section header color variants */
+.detail-card-header.eqh-door{border-left-color:var(--blue);background:var(--blue-light);color:var(--blue)}
+.detail-card-header.eqh-leveler{border-left-color:var(--accent);background:var(--blue-light);color:var(--accent)}
+.detail-card-header.eqh-restraint{border-left-color:#7C3AED;background:#F5F3FF;color:#7C3AED}
+.checklist-header.eqh-door{border-left:4px solid var(--blue)}
+.checklist-header.eqh-leveler{border-left:4px solid var(--accent)}
+.checklist-header.eqh-restraint{border-left:4px solid #7C3AED}
 .checklist-card{background:var(--white);border:none;box-shadow:var(--shadow);border-radius:var(--radius);margin-bottom:10px;overflow:hidden}
 .checklist-header{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
 .checklist-title{font-size:12px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.04em}
@@ -131,6 +150,8 @@ select.field-input{font-size:14px;color:var(--text2)}
 .center-action{flex:1;height:56px;border-radius:var(--radius);background:var(--blue);color:var(--white);border:none;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit}
 .center-action:active{opacity:.85}
 .center-action.finish{background:var(--green)}
+.center-action:disabled{background:var(--checkbox-border);color:var(--white);cursor:default;opacity:1}
+.center-action:disabled:active{opacity:1}
 
 /* ── REPORT SCREEN ── */
 #report-screen{background:var(--surface)}
@@ -154,6 +175,13 @@ select.field-input{font-size:14px;color:var(--text2)}
 .scorecard-row:last-child{border-bottom:none}
 .sc-name{font-size:14px;font-weight:600;color:var(--text);flex:1;min-width:0}
 .sc-count{font-size:11px;color:var(--gray);flex-shrink:0}
+.sc-eq-icons{display:inline-flex;gap:4px;vertical-align:middle}
+.sc-eq-icon{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;font-size:11px;color:#fff}
+.sc-eq-icon.door{background:var(--blue)}
+.sc-eq-icon.leveler{background:var(--accent)}
+.sc-eq-icon.restraint{background:#7C3AED}
+.finding-position-header{padding:10px 14px;background:var(--surface);font-size:12px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--border)}
+.udg-eq-label{padding:8px 14px;font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.04em;background:var(--surface);border-top:1px solid var(--border)}
 
 .cond-badge{display:inline-block;padding:4px 10px;border-radius:var(--radius-pill);font-size:11px;font-weight:700;color:var(--white);flex-shrink:0}
 .cond-badge.none{background:var(--pill-bg);color:var(--text2);font-weight:600}
@@ -219,33 +247,19 @@ select.field-input{font-size:14px;color:var(--text2)}
         <div class="field-row"><span class="field-label">Date</span><input class="field-input" id="f-date" type="text" placeholder="MM/DD/YYYY" autocomplete="off"></div>
       </div>
 
-      <div class="section-label">Equipment on this visit</div>
-      <div class="eq-chips">
-        <div class="eq-chip on" id="chip-door">
-          <div class="eq-chip-left"><div class="eq-chip-icon">🚪</div><div class="eq-chip-name">Door</div></div>
-          <div class="count-ctrl">
-            <button class="count-btn" onclick="changeCount('door',-1,event)">−</button>
-            <span class="count-val" id="count-door">1</span>
-            <button class="count-btn" onclick="changeCount('door',1,event)">+</button>
-          </div>
+      <div class="section-label">Dock positions</div>
+      <div class="position-count-card">
+        <div>
+          <div class="position-count-name">Number of positions</div>
+          <div class="position-count-sub">How many dock positions will you inspect?</div>
         </div>
-        <div class="eq-chip on" id="chip-leveler">
-          <div class="eq-chip-left"><div class="eq-chip-icon">⬆️</div><div class="eq-chip-name">Leveler</div></div>
-          <div class="count-ctrl">
-            <button class="count-btn" onclick="changeCount('leveler',-1,event)">−</button>
-            <span class="count-val" id="count-leveler">1</span>
-            <button class="count-btn" onclick="changeCount('leveler',1,event)">+</button>
-          </div>
-        </div>
-        <div class="eq-chip on" id="chip-restraint">
-          <div class="eq-chip-left"><div class="eq-chip-icon">🔒</div><div class="eq-chip-name">Truck restraint</div></div>
-          <div class="count-ctrl">
-            <button class="count-btn" onclick="changeCount('restraint',-1,event)">−</button>
-            <span class="count-val" id="count-restraint">1</span>
-            <button class="count-btn" onclick="changeCount('restraint',1,event)">+</button>
-          </div>
+        <div class="count-ctrl">
+          <button class="count-btn" onclick="changePositionCount(-1)">−</button>
+          <span class="count-val" id="position-count-val">1</span>
+          <button class="count-btn" onclick="changePositionCount(1)">+</button>
         </div>
       </div>
+      <div class="position-help">At each position you'll choose which equipment is present — door, leveler, truck restraint, or any combination — during inspection.</div>
 
       <button class="btn-primary" onclick="goToTemplates()">Next: Set equipment defaults →</button>
     </div>
@@ -259,7 +273,7 @@ select.field-input{font-size:14px;color:var(--text2)}
       <div class="tmpl-header">
         <div class="back-link" onclick="showScreen('job-screen')">← Back</div>
         <h2>Equipment defaults</h2>
-        <p>Fill in make, model, and type once — every unit of this type will start with these values. Serial numbers are filled in per unit during inspection.</p>
+        <p>Set make, model, and type for each equipment type once. These defaults apply to every position. Serial numbers and condition ratings are set per position during inspection.</p>
       </div>
 
       <!-- door template -->
@@ -317,8 +331,8 @@ select.field-input{font-size:14px;color:var(--text2)}
 <div class="screen" id="insp-screen">
   <div class="insp-top">
     <div class="insp-nav">
-      <span class="nav-meta" id="insp-counter">Unit 1 of 4</span>
-      <span class="nav-title" id="insp-title">Door #1</span>
+      <span class="nav-meta" id="insp-counter">Position 1 of 1</span>
+      <input class="nav-title" id="insp-title" type="text" placeholder="Position label" oninput="setPositionLabel(S.cursor,this.value)" autocomplete="off">
     </div>
     <div class="progress-row" id="progress-row"></div>
   </div>
@@ -348,32 +362,19 @@ const CHECKS={
 const META={door:{label:'Door',emoji:'🚪'},leveler:{label:'Leveler',emoji:'⬆️'},restraint:{label:'Truck restraint',emoji:'🔒'}};
 
 const S={
-  counts:{door:1,leveler:1,restraint:1},
-  active:{door:true,leveler:true,restraint:true},
-  tmplTypes:{door:'sectional',leveler:'mechanical',restraint:''},
-  units:[],
+  positionCount:1,
+  positions:[],
+  tmplTypes:{door:'sectional',leveler:'mechanical'},
   cursor:0,
 };
 
 // ── JOB SCREEN ──
-function changeCount(eq,delta,e){
-  e.stopPropagation();
-  S.counts[eq]=Math.max(0,S.counts[eq]+delta);
-  S.active[eq]=S.counts[eq]>0;
-  document.getElementById('chip-'+eq).classList.toggle('on',S.active[eq]);
-  document.getElementById('count-'+eq).textContent=S.counts[eq];
+function changePositionCount(delta){
+  S.positionCount=Math.min(30,Math.max(1,S.positionCount+delta));
+  document.getElementById('position-count-val').textContent=S.positionCount;
 }
 
 function goToTemplates(){
-  // show/hide template blocks based on active eq
-  ['door','leveler','restraint'].forEach(eq=>{
-    const block=document.getElementById('tmpl-'+eq+'-block');
-    block.style.display=S.active[eq]?'block':'none';
-    if(S.active[eq]){
-      const c=S.counts[eq];
-      document.getElementById('tmpl-'+eq+'-count').textContent=c>1?`(${c} units)`:'(1 unit)';
-    }
-  });
   showScreen('tmpl-screen');
 }
 
@@ -383,11 +384,11 @@ function setTmplType(eq,val,btn){
   btn.classList.add('on');
 }
 
-// ── BUILD UNITS FROM TEMPLATES ──
-function mkUnit(eq,n){
+// ── BUILD EQUIPMENT FROM TEMPLATES ──
+function mkEquipment(eq){
   const t=getTmpl(eq);
   const checks=CHECKS[eq].map(()=>({done:false,flagged:false,note:'',photos:[]}));
-  return Object.assign({eq,n,sn:'',condition:'',checks,photos:[],unitComments:''},t);
+  return Object.assign({eq,sn:'',checks},t);
 }
 
 function getTmpl(eq){
@@ -412,24 +413,38 @@ function getTmpl(eq){
 }
 
 function startInspection(){
-  S.units=[];
+  S.positions=[];
   S.cursor=0;
-  ['door','leveler','restraint'].forEach(eq=>{
-    if(!S.active[eq])return;
-    for(let n=1;n<=S.counts[eq];n++) S.units.push(mkUnit(eq,n));
-  });
-  if(!S.units.length)return;
+  for(let n=1;n<=S.positionCount;n++){
+    S.positions.push({label:'Position '+n,equipment:[],door:null,leveler:null,restraint:null,condition:'',unitComments:''});
+  }
   buildAllCards();
   buildProgress();
   updateBottomBar();
   showScreen('insp-screen');
 }
 
+function toggleEquipment(posIdx,eq){
+  const pos=S.positions[posIdx];
+  const idx=pos.equipment.indexOf(eq);
+  if(idx===-1){
+    pos.equipment.push(eq);
+    pos[eq]=mkEquipment(eq);
+  }else{
+    if(!confirm(`Remove ${META[eq].label} from this position? Its checklist data will be lost.`))return;
+    pos.equipment.splice(idx,1);
+    pos[eq]=null;
+  }
+  refreshCard(posIdx);
+  buildProgress();
+  updateBottomBar();
+}
+
 // ── CARD RENDERING ──
 function buildAllCards(){
   const area=document.getElementById('swipe-area');
   area.innerHTML='';
-  S.units.forEach((_,i)=>{
+  S.positions.forEach((_,i)=>{
     const div=document.createElement('div');
     div.className='unit-card '+(i===0?'center':'right');
     div.id='card-'+i;
@@ -438,13 +453,9 @@ function buildAllCards(){
   });
 }
 
-function buildCardHTML(i){
-  const u=S.units[i];
-  const eq=u.eq;
-  const multi=S.counts[eq]>1;
-  const unitLabel=multi?`${META[eq].label} #${u.n}`:META[eq].label;
+function eqSectionHTML(i,eq){
+  const u=S.positions[i][eq];
 
-  // template summary (read-only display with edit link)
   let tmplSummary='<div class="tmpl-summary">';
   tmplSummary+=`<div class="tmpl-summary-row">Make <span>${u.mfr||'—'}</span></div>`;
   tmplSummary+=`<div class="tmpl-summary-row">Model <span>${u.model||'—'}</span></div>`;
@@ -462,57 +473,79 @@ function buildCardHTML(i){
   const allDone=u.checks.every(c=>c.done);
 
   const checkItems=u.checks.map((chk,ci)=>`
-    <div class="ci${chk.flagged?' ci-flagged':''}" id="ci-${i}-${ci}">
-      <div class="ci-check" onclick="toggleCheck(${i},${ci})">
+    <div class="ci${chk.flagged?' ci-flagged':''}" id="ci-${i}-${eq}-${ci}">
+      <div class="ci-check" onclick="toggleCheck(${i},'${eq}',${ci})">
         <div class="ci-box${chk.done?' done':''}"><span class="ci-mark">✓</span></div>
       </div>
       <div class="ci-body">
         <div class="ci-text">${CHECKS[eq][ci]}</div>
         <div class="ci-actions">
-          <button class="ci-action${chk.flagged?' flagged':''}" onclick="toggleFlag(${i},${ci})">${chk.flagged?'⚠ Flagged':'Flag issue'}</button>
-          <button class="ci-action${chk.photos.length?' has-photos':''}" onclick="addPhoto(${i},${ci})">📷 Photo${chk.photos.length?` (${chk.photos.length})`:''}</button>
+          <button class="ci-action${chk.flagged?' flagged':''}" onclick="toggleFlag(${i},'${eq}',${ci})">${chk.flagged?'⚠ Flagged':'Flag issue'}</button>
+          <button class="ci-action${chk.photos.length?' has-photos':''}" onclick="addPhoto(${i},'${eq}',${ci})">📷 Photo${chk.photos.length?` (${chk.photos.length})`:''}</button>
         </div>
-        ${chk.flagged?`<input class="ci-note-input" type="text" placeholder="Describe the issue..." value="${chk.note.replace(/"/g,'&quot;')}" oninput="S.units[${i}].checks[${ci}].note=this.value">`:``}
-        ${chk.photos.length?`<div class="ci-photos">${chk.photos.map((p,pi)=>`<div class="ci-photo-wrap"><img class="ci-photo" src="${p}"><div class="ci-photo-del" onclick="delPhoto(${i},${ci},${pi})">×</div></div>`).join('')}</div>`:``}
+        ${chk.flagged?`<input class="ci-note-input" type="text" placeholder="Describe the issue..." value="${chk.note.replace(/"/g,'&quot;')}" oninput="S.positions[${i}].${eq}.checks[${ci}].note=this.value">`:``}
+        ${chk.photos.length?`<div class="ci-photos">${chk.photos.map((p,pi)=>`<div class="ci-photo-wrap"><img class="ci-photo" src="${p}"><div class="ci-photo-del" onclick="delPhoto(${i},'${eq}',${ci},${pi})">×</div></div>`).join('')}</div>`:``}
       </div>
     </div>`).join('');
 
-  const isLast=i===S.units.length-1;
-
   return`
     <div class="detail-card">
-      <div class="detail-card-header">
-        <span>${unitLabel}</span>
+      <div class="detail-card-header eqh-${eq}">
+        <span>${META[eq].emoji} ${META[eq].label}</span>
         <span class="edit-tmpl-link" onclick="showScreen('tmpl-screen')">Edit defaults</span>
       </div>
       ${tmplSummary}
       <div class="sn-row">
         <span class="sn-label">Serial #</span>
-        <input class="sn-input" type="text" placeholder="Tap to enter SN" value="${u.sn}" oninput="S.units[${i}].sn=this.value" autocomplete="off">
-      </div>
-    </div>
-    <div class="detail-card">
-      <div class="detail-card-header">Condition rating</div>
-      <div class="condition-row">
-        <button class="condition-btn${u.condition==='good'?' sel-good':''}" onclick="setCondition(${i},'good')">Good</button>
-        <button class="condition-btn${u.condition==='fair'?' sel-fair':''}" onclick="setCondition(${i},'fair')">Fair</button>
-        <button class="condition-btn${u.condition==='attention'?' sel-attention':''}" onclick="setCondition(${i},'attention')">Needs Attention</button>
-        <button class="condition-btn${u.condition==='safety'?' sel-safety':''}" onclick="setCondition(${i},'safety')">Safety Concern</button>
+        <input class="sn-input" type="text" placeholder="Tap to enter SN" value="${u.sn}" oninput="S.positions[${i}].${eq}.sn=this.value" autocomplete="off">
       </div>
     </div>
     <div class="checklist-card">
-      <div class="checklist-header">
-        <span class="checklist-title">Checklist</span>
-        <button class="mark-all-btn${allDone?' undo':''}" onclick="markAll(${i})">${allDone?'Undo all':'Mark all done'}</button>
+      <div class="checklist-header eqh-${eq}">
+        <span class="checklist-title">${META[eq].label} checklist</span>
+        <button class="mark-all-btn${allDone?' undo':''}" onclick="markAll(${i},'${eq}')">${allDone?'Undo all':'Mark all done'}</button>
       </div>
       <div class="checklist-items">${checkItems}</div>
-    </div>
+    </div>`;
+}
+
+function buildCardHTML(i){
+  const pos=S.positions[i];
+
+  const eqPills=['door','leveler','restraint'].map(eq=>{
+    const sel=pos.equipment.includes(eq);
+    return `<button class="eq-pill${sel?' sel-'+eq:''}" onclick="toggleEquipment(${i},'${eq}')"><span class="eq-pill-icon">${META[eq].emoji}</span>${META[eq].label}</button>`;
+  }).join('');
+
+  const labelCard=`
+    <div class="pos-label-card">
+      <input class="pos-label-input" type="text" placeholder="Position label" value="${pos.label.replace(/"/g,'&quot;')}" oninput="setPositionLabel(${i},this.value)" autocomplete="off">
+      <div class="eq-select-row">${eqPills}</div>
+      ${pos.equipment.length===0?`<div class="eq-empty-hint">Tap an equipment type above to begin this position's inspection.</div>`:''}
+    </div>`;
+
+  const conditionCard=`
+    <div class="detail-card">
+      <div class="detail-card-header">Condition rating</div>
+      <div class="condition-row">
+        <button class="condition-btn${pos.condition==='good'?' sel-good':''}" onclick="setPositionCondition(${i},'good')">Good</button>
+        <button class="condition-btn${pos.condition==='fair'?' sel-fair':''}" onclick="setPositionCondition(${i},'fair')">Fair</button>
+        <button class="condition-btn${pos.condition==='attention'?' sel-attention':''}" onclick="setPositionCondition(${i},'attention')">Needs Attention</button>
+        <button class="condition-btn${pos.condition==='safety'?' sel-safety':''}" onclick="setPositionCondition(${i},'safety')">Safety Concern</button>
+      </div>
+    </div>`;
+
+  const eqSections=pos.equipment.map(eq=>eqSectionHTML(i,eq)).join('');
+
+  const notesCard=`
     <div class="detail-card">
       <div class="detail-card-header">Notes / parts / recommendations</div>
       <div style="padding:10px 14px">
-        <textarea style="width:100%;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:14px;font-family:inherit;resize:none;min-height:80px;color:var(--text);outline:none;background:var(--surface)" placeholder="Parts needed, recommendations, observations for this unit..." oninput="S.units[${i}].unitComments=this.value">${u.unitComments||''}</textarea>
+        <textarea style="width:100%;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:14px;font-family:inherit;resize:none;min-height:80px;color:var(--text);outline:none;background:var(--surface)" placeholder="Parts needed, recommendations, observations for this position..." oninput="S.positions[${i}].unitComments=this.value">${pos.unitComments||''}</textarea>
       </div>
     </div>`;
+
+  return labelCard+conditionCard+eqSections+notesCard;
 }
 
 function refreshCard(i){
@@ -521,36 +554,41 @@ function refreshCard(i){
 }
 
 // ── CHECKLIST ACTIONS ──
-function toggleCheck(i,ci){S.units[i].checks[ci].done=!S.units[i].checks[ci].done;refreshCard(i);updateBottomBar();}
-function toggleFlag(i,ci){
-  const chk=S.units[i].checks[ci];
+function setPositionLabel(i,val){
+  S.positions[i].label=val;
+  if(i===S.cursor) document.getElementById('insp-title').value=val;
+  buildProgress();
+}
+function toggleCheck(i,eq,ci){S.positions[i][eq].checks[ci].done=!S.positions[i][eq].checks[ci].done;refreshCard(i);updateBottomBar();}
+function toggleFlag(i,eq,ci){
+  const chk=S.positions[i][eq].checks[ci];
   chk.flagged=!chk.flagged;
   if(!chk.flagged)chk.note='';
   refreshCard(i);
 }
-function markAll(i){
-  const allDone=S.units[i].checks.every(c=>c.done);
-  S.units[i].checks.forEach(c=>c.done=!allDone);
+function markAll(i,eq){
+  const allDone=S.positions[i][eq].checks.every(c=>c.done);
+  S.positions[i][eq].checks.forEach(c=>c.done=!allDone);
   refreshCard(i);
   updateBottomBar();
 }
-function addPhoto(i,ci){
+function addPhoto(i,eq,ci){
   const inp=document.createElement('input');
   inp.type='file';inp.accept='image/*';inp.capture='environment';inp.multiple=true;
   inp.onchange=e=>{
     Array.from(e.target.files).forEach(f=>{
       const r=new FileReader();
-      r.onload=ev=>{S.units[i].checks[ci].photos.push(ev.target.result);refreshCard(i);};
+      r.onload=ev=>{S.positions[i][eq].checks[ci].photos.push(ev.target.result);refreshCard(i);};
       r.readAsDataURL(f);
     });
   };inp.click();
 }
-function delPhoto(i,ci,pi){S.units[i].checks[ci].photos.splice(pi,1);refreshCard(i);}
-function setCondition(i,val){S.units[i].condition=val;refreshCard(i);}
+function delPhoto(i,eq,ci,pi){S.positions[i][eq].checks[ci].photos.splice(pi,1);refreshCard(i);}
+function setPositionCondition(i,val){S.positions[i].condition=val;refreshCard(i);}
 
 // ── NAVIGATION ──
 function positionCards(){
-  S.units.forEach((_,i)=>{
+  S.positions.forEach((_,i)=>{
     const c=document.getElementById('card-'+i);
     if(!c)return;
     c.classList.remove('left','center','right');
@@ -559,34 +597,53 @@ function positionCards(){
 }
 function navigate(dir){
   const next=S.cursor+dir;
-  if(next<0||next>=S.units.length)return;
+  if(next<0||next>=S.positions.length)return;
   S.cursor=next;
   positionCards();buildProgress();updateBottomBar();
 }
 function buildProgress(){
-  document.getElementById('progress-row').innerHTML=S.units.map((_,i)=>`<div class="progress-dot${i<S.cursor?' done':i===S.cursor?' active':''}"></div>`).join('');
-  const u=S.units[S.cursor];
-  document.getElementById('insp-counter').textContent=`Unit ${S.cursor+1} of ${S.units.length}`;
-  document.getElementById('insp-title').textContent=S.counts[u.eq]>1?`${META[u.eq].label} #${u.n}`:META[u.eq].label;
+  document.getElementById('progress-row').innerHTML=S.positions.map((_,i)=>`<div class="progress-dot${i<S.cursor?' done':i===S.cursor?' active':''}"></div>`).join('');
+  const pos=S.positions[S.cursor];
+  document.getElementById('insp-counter').textContent=`Position ${S.cursor+1} of ${S.positions.length}`;
+  const titleInput=document.getElementById('insp-title');
+  if(titleInput.value!==pos.label) titleInput.value=pos.label;
+}
+function allDoneForPosition(pos){
+  if(!pos.equipment.length)return false;
+  return pos.equipment.every(eq=>pos[eq].checks.every(c=>c.done));
+}
+function markAllPositionDone(i){
+  const pos=S.positions[i];
+  pos.equipment.forEach(eq=>{pos[eq].checks.forEach(c=>c.done=true);});
+  refreshCard(i);
+  updateBottomBar();
 }
 function updateBottomBar(){
   document.getElementById('btn-prev').disabled=S.cursor===0;
-  const isLast=S.cursor===S.units.length-1;
+  const isLast=S.cursor===S.positions.length-1;
   document.getElementById('btn-next').disabled=isLast;
+  const pos=S.positions[S.cursor];
   const btn=document.getElementById('btn-main');
-  if(isLast){btn.textContent='Generate report';btn.className='center-action finish';}
-  else{
-    const allDone=S.units[S.cursor].checks.every(c=>c.done);
-    btn.textContent=allDone?'Next →':'Mark all done';
+  if(pos.equipment.length===0){
+    btn.textContent='Select equipment above';
     btn.className='center-action';
+    btn.disabled=true;
+    return;
   }
+  btn.disabled=false;
+  const allDone=allDoneForPosition(pos);
+  if(isLast&&allDone){btn.textContent='Generate report';btn.className='center-action finish';}
+  else if(allDone){btn.textContent='Next →';btn.className='center-action';}
+  else{btn.textContent='Mark all done';btn.className='center-action';}
 }
 function mainAction(){
-  if(S.cursor===S.units.length-1){buildReport();return;}
-  const allDone=S.units[S.cursor].checks.every(c=>c.done);
-  if(!allDone){markAll(S.cursor);}
+  const pos=S.positions[S.cursor];
+  if(pos.equipment.length===0)return;
+  const allDone=allDoneForPosition(pos);
+  const isLast=S.cursor===S.positions.length-1;
+  if(isLast&&allDone){buildReport();return;}
+  if(!allDone){markAllPositionDone(S.cursor);}
   else{navigate(1);}
-  updateBottomBar();
 }
 
 // swipe
@@ -622,72 +679,78 @@ function buildReport(){
   const date=document.getElementById('f-date').value||'—';
   const year=new Date().getFullYear();
 
-  // 2 — equipment condition scorecard
+  // 2 — equipment condition scorecard, grouped by position
   let scoreHTML='';
-  S.units.forEach(u=>{
-    const multi=S.counts[u.eq]>1;
-    const title=multi?`${META[u.eq].label} #${u.n}`:META[u.eq].label;
-    const findingCount=u.checks.filter(c=>c.flagged).length;
+  S.positions.forEach(pos=>{
+    const icons=pos.equipment.map(eq=>`<span class="sc-eq-icon ${eq}">${META[eq].emoji}</span>`).join('');
+    let findingCount=0;
+    pos.equipment.forEach(eq=>{findingCount+=pos[eq].checks.filter(c=>c.flagged).length;});
     scoreHTML+=`<div class="scorecard-row">
-      <span class="sc-name">${META[u.eq].emoji} ${title}</span>
-      ${condBadgeHTML(u.condition)}
+      <span class="sc-name">${pos.label}${icons?` <span class="sc-eq-icons">${icons}</span>`:''}</span>
+      ${condBadgeHTML(pos.condition)}
       <span class="sc-count">${findingCount?`${findingCount} finding${findingCount>1?'s':''}`:'No findings'}</span>
     </div>`;
   });
 
-  // 3 — findings requiring attention
-  const findings=[];
-  S.units.forEach(u=>{
-    const multi=S.counts[u.eq]>1;
-    const title=multi?`${META[u.eq].label} #${u.n}`:META[u.eq].label;
-    u.checks.forEach((chk,ci)=>{
-      if(chk.flagged) findings.push({title,eq:u.eq,text:CHECKS[u.eq][ci],note:chk.note,photos:chk.photos});
-    });
-  });
+  // 3 — findings requiring attention, grouped by position
+  const positionsWithFindings=S.positions.filter(pos=>pos.equipment.some(eq=>pos[eq].checks.some(c=>c.flagged)));
   let findingsHTML='';
-  if(findings.length){
+  if(positionsWithFindings.length){
     findingsHTML=`
     <div class="rep-section-title danger">Findings Requiring Attention</div>
     <div class="findings-card">
-      ${findings.map(f=>`
-        <div class="finding-item">
-          <div class="finding-head">${META[f.eq].emoji} ${f.title}</div>
-          <div class="finding-text">${f.text}</div>
-          ${f.note?`<div class="finding-note">${f.note}</div>`:''}
-          ${f.photos.length?`<div class="finding-photos">${f.photos.map(p=>`<img class="finding-photo" src="${p}">`).join('')}</div>`:''}
-        </div>`).join('')}
+      ${positionsWithFindings.map(pos=>{
+        let groupHTML=`<div class="finding-position-header">${pos.label}</div>`;
+        pos.equipment.forEach(eq=>{
+          const u=pos[eq];
+          u.checks.forEach((chk,ci)=>{
+            if(!chk.flagged)return;
+            groupHTML+=`<div class="finding-item">
+              <div class="finding-head">${META[eq].emoji} ${META[eq].label}</div>
+              <div class="finding-text">${CHECKS[eq][ci]}</div>
+              ${chk.note?`<div class="finding-note">${chk.note}</div>`:''}
+              ${chk.photos.length?`<div class="finding-photos">${chk.photos.map(p=>`<img class="finding-photo" src="${p}">`).join('')}</div>`:''}
+            </div>`;
+          });
+        });
+        return groupHTML;
+      }).join('')}
     </div>`;
   }
 
-  // 4 — full inspection detail
+  // 4 — full inspection detail, one card per position
   let detailHTML='';
-  S.units.forEach(u=>{
-    const eq=u.eq;
-    const multi=S.counts[eq]>1;
-    const title=multi?`${META[eq].label} #${u.n}`:META[eq].label;
-    const rows=unitDetailRows(u);
-    let gridHTML='';
-    for(let r=0;r<rows.length;r+=2){
-      const alt=((r/2)%2===1);
-      gridHTML+=`<div class="udg-row${alt?' alt':''}">
-        <div class="udg-cell"><span class="udg-label">${rows[r][0]}</span><span class="udg-val">${rows[r][1]}</span></div>
-        ${rows[r+1]?`<div class="udg-cell"><span class="udg-label">${rows[r+1][0]}</span><span class="udg-val">${rows[r+1][1]}</span></div>`:'<div class="udg-cell"></div>'}
-      </div>`;
-    }
-    const checklist=u.checks.map((chk,ci)=>{
-      const icon=chk.flagged?'<span class="s-flag">⚠</span>':chk.done?'<span class="s-done">✓</span>':'<span class="s-skip">—</span>';
-      const photos=chk.photos.length?`<div class="rck-photos">${chk.photos.map(p=>`<img class="rck-photo" src="${p}">`).join('')}</div>`:'';
-      return`<div class="rck"><div class="rck-icon">${icon}</div><div class="rck-body">${CHECKS[eq][ci]}${chk.flagged&&chk.note?`<div class="rck-note">${chk.note}</div>`:''}${photos}</div></div>`;
-    }).join('');
-    const notesHTML=u.unitComments?`<div class="unit-notes-box"><span class="unb-label">Tech notes:</span>${u.unitComments}</div>`:'';
+  S.positions.forEach(pos=>{
+    const icons=pos.equipment.map(eq=>`<span class="sc-eq-icon ${eq}">${META[eq].emoji}</span>`).join('');
+    let bodyHTML='';
+    pos.equipment.forEach(eq=>{
+      const u=pos[eq];
+      const rows=unitDetailRows(u);
+      let gridHTML='';
+      for(let r=0;r<rows.length;r+=2){
+        const alt=((r/2)%2===1);
+        gridHTML+=`<div class="udg-row${alt?' alt':''}">
+          <div class="udg-cell"><span class="udg-label">${rows[r][0]}</span><span class="udg-val">${rows[r][1]}</span></div>
+          ${rows[r+1]?`<div class="udg-cell"><span class="udg-label">${rows[r+1][0]}</span><span class="udg-val">${rows[r+1][1]}</span></div>`:'<div class="udg-cell"></div>'}
+        </div>`;
+      }
+      const checklist=u.checks.map((chk,ci)=>{
+        const icon=chk.flagged?'<span class="s-flag">⚠</span>':chk.done?'<span class="s-done">✓</span>':'<span class="s-skip">—</span>';
+        const photos=chk.photos.length?`<div class="rck-photos">${chk.photos.map(p=>`<img class="rck-photo" src="${p}">`).join('')}</div>`:'';
+        return`<div class="rck"><div class="rck-icon">${icon}</div><div class="rck-body">${CHECKS[eq][ci]}${chk.flagged&&chk.note?`<div class="rck-note">${chk.note}</div>`:''}${photos}</div></div>`;
+      }).join('');
+      bodyHTML+=`<div class="udg-eq-label">${META[eq].emoji} ${META[eq].label}</div>
+        <div class="udg">${gridHTML}</div>
+        <div class="unit-checklist">${checklist}</div>`;
+    });
+    const notesHTML=pos.unitComments?`<div class="unit-notes-box"><span class="unb-label">Tech notes:</span>${pos.unitComments}</div>`:'';
     detailHTML+=`
     <div class="unit-detail-card">
       <div class="unit-detail-title">
-        <span>${META[eq].emoji} ${title}</span>
-        ${condBadgeHTML(u.condition)}
+        <span>${pos.label}${icons?` <span class="sc-eq-icons">${icons}</span>`:''}</span>
+        ${condBadgeHTML(pos.condition)}
       </div>
-      <div class="udg">${gridHTML}</div>
-      <div class="unit-checklist">${checklist}</div>
+      ${bodyHTML}
       ${notesHTML}
     </div>`;
   });
@@ -765,6 +828,13 @@ function printReport(){
     .scorecard-row:last-child{border-bottom:none}
     .sc-name{font-size:13px;font-weight:600;color:var(--text);flex:1;min-width:0}
     .sc-count{font-size:11px;color:var(--gray);flex-shrink:0}
+    .sc-eq-icons{display:inline-flex;gap:4px;vertical-align:middle}
+    .sc-eq-icon{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;font-size:10px;color:#fff}
+    .sc-eq-icon.door{background:var(--blue)}
+    .sc-eq-icon.leveler{background:#2563EB}
+    .sc-eq-icon.restraint{background:#7C3AED}
+    .finding-position-header{padding:8px 14px;background:var(--surface);font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--border)}
+    .udg-eq-label{padding:7px 14px;font-size:10px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.04em;background:var(--surface);border-top:1px solid var(--border)}
     .cond-badge{display:inline-block;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
     .cond-badge.none{background:var(--pill-bg);color:var(--gray);font-weight:600}
     .cond-badge.good{background:var(--green)}
