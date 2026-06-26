@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>SDP Field Inspection</title>
+<style>
+:root{
+  --blue:#003366;--blue-light:#e8eef5;--blue-mid:#6699cc;
+  --red:#c0392b;--red-light:#fff0f0;
+  --green:#1a7a3a;--green-light:#f0fff4;
+  --gray:#888;--border:#e0e0e0;--surface:#f5f5f0;--white:#fff;
+  --text:#1a1a1a;--text2:#555;--radius:12px;--radius-sm:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--surface);font-family:system-ui,-apple-system,sans-serif;color:var(--text)}
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .18s}
+.screen.active{opacity:1;pointer-events:all}
+
+/* ── SHARED ── */
+.scroll-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.section-label{font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;padding-left:2px}
+.field-group{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;margin-bottom:14px}
+.field-row{display:flex;align-items:center;padding:0 14px;border-bottom:1px solid var(--border);min-height:52px;gap:10px}
+.field-row:last-child{border-bottom:none}
+.field-label{font-size:12px;color:var(--gray);width:86px;flex-shrink:0}
+.field-input{flex:1;border:none;background:transparent;font-size:15px;color:var(--text);font-family:inherit;padding:0;outline:none;min-width:0}
+.field-input::placeholder{color:#ccc}
+select.field-input{font-size:14px;color:var(--text2)}
+.btn-primary{width:100%;padding:18px;background:var(--blue);color:var(--white);border:none;border-radius:var(--radius);font-size:17px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-primary:active{opacity:.85}
+.btn-secondary{width:100%;padding:15px;background:transparent;color:var(--text);border:1px solid var(--border);border-radius:var(--radius);font-size:15px;cursor:pointer;font-family:inherit;margin-top:8px}
+.btn-secondary:active{opacity:.7}
+.type-row{padding:10px 14px;display:flex;gap:6px}
+.type-btn{flex:1;padding:9px 4px;border:1px solid var(--border);border-radius:6px;background:var(--white);font-size:13px;cursor:pointer;font-family:inherit;color:var(--text2)}
+.type-btn.on{background:var(--blue);color:var(--white);border-color:var(--blue)}
+
+/* ── JOB SCREEN ── */
+#job-screen{background:var(--surface)}
+.job-inner{padding:20px 16px 24px}
+.sdp-logo{margin-bottom:24px}
+.sdp-logo .name{font-size:20px;font-weight:700;color:var(--blue)}
+.sdp-logo .sub{font-size:12px;color:var(--gray);margin-top:2px}
+.eq-chips{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.eq-chip{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;user-select:none}
+.eq-chip.on{border-color:var(--blue);background:var(--blue-light)}
+.eq-chip-left{display:flex;align-items:center;gap:12px}
+.eq-chip-icon{width:36px;height:36px;border-radius:8px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:18px}
+.eq-chip.on .eq-chip-icon{background:var(--white)}
+.eq-chip-name{font-size:15px;font-weight:500}
+.count-ctrl{display:flex;align-items:center;gap:8px}
+.count-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--white);font-size:20px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-weight:300}
+.count-btn:active{background:var(--blue-light)}
+.count-val{font-size:16px;font-weight:700;min-width:22px;text-align:center;color:var(--blue)}
+
+/* ── TEMPLATE SCREEN ── */
+#tmpl-screen{background:var(--surface)}
+.tmpl-inner{padding:16px 16px 24px}
+.tmpl-header{margin-bottom:20px}
+.tmpl-header .back-link{font-size:13px;color:var(--blue-mid);cursor:pointer;margin-bottom:10px;display:inline-block}
+.tmpl-header h2{font-size:18px;font-weight:700;color:var(--blue)}
+.tmpl-header p{font-size:13px;color:var(--gray);margin-top:4px;line-height:1.4}
+.tmpl-eq-block{margin-bottom:18px}
+.tmpl-eq-label{font-size:13px;font-weight:700;color:var(--blue);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+
+/* ── INSPECTION SCREEN ── */
+#insp-screen{background:var(--surface)}
+.insp-top{background:var(--white);border-bottom:1px solid var(--border);padding:12px 16px 10px;flex-shrink:0}
+.insp-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.nav-meta{font-size:12px;color:var(--gray)}
+.nav-title{font-size:16px;font-weight:700;color:var(--blue)}
+.progress-row{display:flex;gap:3px}
+.progress-dot{height:3px;border-radius:2px;flex:1;background:var(--border)}
+.progress-dot.done{background:var(--blue);opacity:.4}
+.progress-dot.active{background:var(--blue)}
+.swipe-area{flex:1;overflow:hidden;position:relative;touch-action:pan-y}
+.unit-card{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 16px 180px;transition:transform .25s cubic-bezier(.4,0,.2,1)}
+.unit-card.left{transform:translateX(-100%)}
+.unit-card.right{transform:translateX(100%)}
+.unit-card.center{transform:translateX(0)}
+.detail-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden}
+.detail-card-header{padding:10px 14px;background:var(--blue-light);font-size:12px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;justify-content:space-between}
+.edit-tmpl-link{font-size:11px;font-weight:500;color:var(--blue-mid);cursor:pointer;text-transform:none;letter-spacing:0}
+.sn-row{display:flex;align-items:center;padding:0 14px;min-height:52px;border-top:1px solid var(--border);gap:10px}
+.sn-label{font-size:12px;color:var(--gray);width:86px;flex-shrink:0}
+.sn-input{flex:1;border:none;background:transparent;font-size:15px;color:var(--text);font-family:inherit;padding:0;outline:none;min-width:0}
+.sn-input::placeholder{color:#ccc}
+.tmpl-summary{padding:10px 14px}
+.tmpl-summary-row{font-size:13px;color:var(--text2);display:flex;gap:6px;margin-bottom:3px}
+.tmpl-summary-row span{color:var(--text);font-weight:500}
+.checklist-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden}
+.checklist-header{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.checklist-title{font-size:12px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.04em}
+.mark-all-btn{padding:7px 16px;background:var(--green);color:var(--white);border:none;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.mark-all-btn.undo{background:var(--gray)}
+.checklist-items{padding:0}
+.ci{display:flex;align-items:flex-start;border-bottom:1px solid var(--border)}
+.ci:last-child{border-bottom:none}
+.ci-check{width:56px;height:56px;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
+.ci-box{width:24px;height:24px;border-radius:6px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .12s}
+.ci-box.done{background:var(--green);border-color:var(--green)}
+.ci-mark{color:var(--white);font-size:14px;font-weight:700;display:none}
+.ci-box.done .ci-mark{display:block}
+.ci-body{flex:1;padding:10px 12px 10px 0;min-height:56px;display:flex;flex-direction:column;justify-content:center}
+.ci-text{font-size:13px;line-height:1.4;color:var(--text)}
+.ci-flagged .ci-text{color:var(--red)}
+.ci-actions{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+.ci-action{padding:5px 12px;font-size:11px;border:1px solid var(--border);border-radius:20px;background:var(--surface);color:var(--text2);cursor:pointer;font-family:inherit}
+.ci-action.flagged{border-color:var(--red);color:var(--red);background:var(--red-light)}
+.ci-note-input{margin-top:7px;width:100%;padding:7px 10px;font-size:12px;border:1px solid var(--red);border-radius:6px;background:var(--red-light);color:var(--text);font-family:inherit;outline:none}
+.ci-photos{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.ci-photo-wrap{position:relative}
+.ci-photo{width:58px;height:58px;object-fit:cover;border-radius:6px;border:1px solid var(--border)}
+.ci-photo-del{position:absolute;top:-5px;right:-5px;width:20px;height:20px;background:var(--red);color:var(--white);border-radius:50%;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700;border:2px solid var(--white)}
+.insp-bottom{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--border);padding:12px 16px;padding-bottom:max(12px,env(safe-area-inset-bottom))}
+.bottom-nav{display:flex;gap:10px;align-items:center}
+.nav-arrow{width:56px;height:56px;border-radius:50%;border:1px solid var(--border);background:var(--white);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--blue);flex-shrink:0}
+.nav-arrow:disabled{color:var(--border);cursor:default}
+.nav-arrow:active:not(:disabled){background:var(--blue-light)}
+.center-action{flex:1;height:56px;border-radius:var(--radius);background:var(--blue);color:var(--white);border:none;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit}
+.center-action:active{opacity:.85}
+.center-action.finish{background:var(--green)}
+
+/* ── REPORT SCREEN ── */
+#report-screen{background:var(--surface)}
+.report-inner{padding:16px 16px 24px}
+.report-header-block{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:16px;margin-bottom:12px}
+.report-co{font-size:17px;font-weight:700;color:var(--blue)}
+.report-co-sub{font-size:11px;color:var(--gray);margin-top:2px;margin-bottom:12px}
+.report-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rmi{font-size:12px;color:var(--text2)}.rmi strong{color:var(--text);display:block;font-size:14px}
+.report-eq{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);margin-bottom:12px;overflow:hidden}
+.report-eq-title{background:var(--blue);color:var(--white);padding:10px 14px;font-size:14px;font-weight:700}
+.rdr{display:flex;padding:6px 14px;border-bottom:1px solid var(--border);font-size:12px}
+.rdr:last-of-type{border-bottom:none}
+.rdl{color:var(--gray);width:100px;flex-shrink:0}
+.rck{padding:7px 14px;border-bottom:1px solid var(--border);font-size:12px;display:flex;align-items:flex-start;gap:8px}
+.rck:last-child{border-bottom:none}
+.rck-icon{flex-shrink:0;width:16px;margin-top:1px}
+.rck-body{flex:1}
+.rck-note{color:var(--red);font-size:11px;margin-top:2px;font-style:italic}
+.rck-photos{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.rck-photo{width:52px;height:52px;object-fit:cover;border-radius:4px;border:1px solid var(--border)}
+.s-done{color:var(--green);font-weight:700}
+.s-flag{color:var(--red);font-weight:700}
+.s-skip{color:#bbb}
+.report-comments{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:14px;margin-bottom:12px}
+.rc-label{font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.rc-text{font-size:13px;color:var(--text2);line-height:1.5}
+.sig-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.sig-box{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:12px;text-align:center}
+.sig-line{height:44px;border-bottom:1px solid var(--border);margin-bottom:6px}
+.sig-label{font-size:11px;color:var(--gray)}
+</style>
+</head>
+<body>
+
+<!-- ══════════ SCREEN 1: JOB INFO ══════════ -->
+<div class="screen active" id="job-screen">
+  <div class="scroll-body">
+    <div class="job-inner">
+      <div class="sdp-logo">
+        <div class="name">Southern Dock Products</div>
+        <div class="sub">Field Inspection · a division of DuraServ Corp</div>
+      </div>
+
+      <div class="section-label">Job info</div>
+      <div class="field-group" style="margin-bottom:20px">
+        <div class="field-row"><span class="field-label">Customer</span><input class="field-input" id="f-customer" type="text" placeholder="Customer name" autocomplete="off"></div>
+        <div class="field-row"><span class="field-label">SO#</span><input class="field-input" id="f-so" type="text" placeholder="Service order" autocomplete="off"></div>
+        <div class="field-row"><span class="field-label">Technician</span><input class="field-input" id="f-tech" type="text" placeholder="Your name" autocomplete="off"></div>
+        <div class="field-row"><span class="field-label">Date</span><input class="field-input" id="f-date" type="text" placeholder="MM/DD/YYYY" autocomplete="off"></div>
+      </div>
+
+      <div class="section-label">Equipment on this visit</div>
+      <div class="eq-chips">
+        <div class="eq-chip on" id="chip-door">
+          <div class="eq-chip-left"><div class="eq-chip-icon">🚪</div><div class="eq-chip-name">Door</div></div>
+          <div class="count-ctrl">
+            <button class="count-btn" onclick="changeCount('door',-1,event)">−</button>
+            <span class="count-val" id="count-door">1</span>
+            <button class="count-btn" onclick="changeCount('door',1,event)">+</button>
+          </div>
+        </div>
+        <div class="eq-chip on" id="chip-leveler">
+          <div class="eq-chip-left"><div class="eq-chip-icon">⬆️</div><div class="eq-chip-name">Leveler</div></div>
+          <div class="count-ctrl">
+            <button class="count-btn" onclick="changeCount('leveler',-1,event)">−</button>
+            <span class="count-val" id="count-leveler">1</span>
+            <button class="count-btn" onclick="changeCount('leveler',1,event)">+</button>
+          </div>
+        </div>
+        <div class="eq-chip on" id="chip-restraint">
+          <div class="eq-chip-left"><div class="eq-chip-icon">🔒</div><div class="eq-chip-name">Truck restraint</div></div>
+          <div class="count-ctrl">
+            <button class="count-btn" onclick="changeCount('restraint',-1,event)">−</button>
+            <span class="count-val" id="count-restraint">1</span>
+            <button class="count-btn" onclick="changeCount('restraint',1,event)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="goToTemplates()">Next: Set equipment defaults →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ SCREEN 2: TEMPLATES ══════════ -->
+<div class="screen" id="tmpl-screen">
+  <div class="scroll-body">
+    <div class="tmpl-inner">
+      <div class="tmpl-header">
+        <div class="back-link" onclick="showScreen('job-screen')">← Back</div>
+        <h2>Equipment defaults</h2>
+        <p>Fill in make, model, and type once — every unit of this type will start with these values. Serial numbers are filled in per unit during inspection.</p>
+      </div>
+
+      <!-- door template -->
+      <div class="tmpl-eq-block" id="tmpl-door-block">
+        <div class="tmpl-eq-label">🚪 Door <span id="tmpl-door-count" style="font-weight:400;color:var(--gray);font-size:12px"></span></div>
+        <div class="field-group">
+          <div class="field-row"><span class="field-label">Manufacturer</span><input class="field-input" id="t-door-mfr" type="text" placeholder="e.g. Amarr, Clopay" autocomplete="off"></div>
+          <div class="field-row"><span class="field-label">Model</span><input class="field-input" id="t-door-model" type="text" placeholder="Model number" autocomplete="off"></div>
+          <div class="field-row"><span class="field-label">Operator</span><input class="field-input" id="t-door-op" type="text" placeholder="e.g. LiftMaster" autocomplete="off"></div>
+          <div class="field-row"><span class="field-label">Op. model</span><input class="field-input" id="t-door-opmodel" type="text" placeholder="Operator model" autocomplete="off"></div>
+          <div class="type-row" id="t-door-type-row">
+            <button class="type-btn on" onclick="setTmplType('door','sectional',this)">Sectional</button>
+            <button class="type-btn" onclick="setTmplType('door','rolling',this)">Rolling steel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- leveler template -->
+      <div class="tmpl-eq-block" id="tmpl-leveler-block">
+        <div class="tmpl-eq-label">⬆️ Leveler <span id="tmpl-leveler-count" style="font-weight:400;color:var(--gray);font-size:12px"></span></div>
+        <div class="field-group">
+          <div class="field-row"><span class="field-label">Manufacturer</span><input class="field-input" id="t-leveler-mfr" type="text" placeholder="e.g. Serco, Rite Hite, Kelly" autocomplete="off"></div>
+          <div class="field-row"><span class="field-label">Model</span><input class="field-input" id="t-leveler-model" type="text" placeholder="Model number" autocomplete="off"></div>
+          <div class="field-row"><span class="field-label">Capacity</span><input class="field-input" id="t-leveler-cap" type="text" placeholder="e.g. 30,000 lbs" autocomplete="off"></div>
+          <div class="field-row">
+            <span class="field-label">Voltage</span>
+            <select class="field-input" id="t-leveler-volt">
+              <option value="">Select...</option>
+              <option>120V/1ph</option><option>208V/1ph</option><option>230V/3ph</option><option>460V/3ph</option>
+            </select>
+          </div>
+          <div class="type-row" id="t-leveler-type-row">
+            <button class="type-btn on" onclick="setTmplType('leveler','mechanical',this)">Mechanical</button>
+            <button class="type-btn" onclick="setTmplType('leveler','hydraulic',this)">Hydraulic</button>
+            <button class="type-btn" onclick="setTmplType('leveler','airbag',this)">Air bag</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- restraint template -->
+      <div class="tmpl-eq-block" id="tmpl-restraint-block">
+        <div class="tmpl-eq-label">🔒 Truck restraint <span id="tmpl-restraint-count" style="font-weight:400;color:var(--gray);font-size:12px"></span></div>
+        <div class="field-group">
+          <div class="field-row"><span class="field-label">Manufacturer</span><input class="field-input" id="t-restraint-mfr" type="text" placeholder="e.g. Rite Hite, Serco" autocomplete="off"></div>
+          <div class="field-row"><span class="field-label">Model</span><input class="field-input" id="t-restraint-model" type="text" placeholder="Model number" autocomplete="off"></div>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="startInspection()">Start inspection →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ SCREEN 3: INSPECTION ══════════ -->
+<div class="screen" id="insp-screen">
+  <div class="insp-top">
+    <div class="insp-nav">
+      <span class="nav-meta" id="insp-counter">Unit 1 of 4</span>
+      <span class="nav-title" id="insp-title">Door #1</span>
+    </div>
+    <div class="progress-row" id="progress-row"></div>
+  </div>
+  <div class="swipe-area" id="swipe-area"></div>
+  <div class="insp-bottom">
+    <div class="bottom-nav">
+      <button class="nav-arrow" id="btn-prev" onclick="navigate(-1)">←</button>
+      <button class="center-action" id="btn-main" onclick="mainAction()">Mark all done</button>
+      <button class="nav-arrow" id="btn-next" onclick="navigate(1)">→</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ SCREEN 4: REPORT ══════════ -->
+<div class="screen" id="report-screen">
+  <div class="scroll-body">
+    <div class="report-inner" id="report-inner"></div>
+  </div>
+</div>
+
+<script>
+const CHECKS={
+  door:["Inspect and adjust spring tension, drums, hinges, cables, door track","Lubricate rollers, tracks, slide locks, and springs","Inspect door sections and weather seal for damage","Retighten any loose screws and fasteners","Inspection of guides, curtain, spring"],
+  leveler:["Complete safety inspection — welds, springs, chains, assemblies, safety legs, cross beams, lip keepers","Clean debris and dirt under leveler in pit","Adjust springs if needed","Lubricate and grease all parts — hinges, springs, hold down assembly","Top off hydraulic fluid"],
+  restraint:["Complete safety inspection — pressure and communication light system","Lubricate rollers, tracks, slide locks, and springs","Re-tighten all screws and bolts","Adjust all necessary parts","Lubricate and grease all necessary parts"]
+};
+const META={door:{label:'Door',emoji:'🚪'},leveler:{label:'Leveler',emoji:'⬆️'},restraint:{label:'Truck restraint',emoji:'🔒'}};
+
+const S={
+  counts:{door:1,leveler:1,restraint:1},
+  active:{door:true,leveler:true,restraint:true},
+  tmplTypes:{door:'sectional',leveler:'mechanical',restraint:''},
+  units:[],
+  cursor:0,
+};
+
+// ── JOB SCREEN ──
+function changeCount(eq,delta,e){
+  e.stopPropagation();
+  S.counts[eq]=Math.max(0,S.counts[eq]+delta);
+  S.active[eq]=S.counts[eq]>0;
+  document.getElementById('chip-'+eq).classList.toggle('on',S.active[eq]);
+  document.getElementById('count-'+eq).textContent=S.counts[eq];
+}
+
+function goToTemplates(){
+  // show/hide template blocks based on active eq
+  ['door','leveler','restraint'].forEach(eq=>{
+    const block=document.getElementById('tmpl-'+eq+'-block');
+    block.style.display=S.active[eq]?'block':'none';
+    if(S.active[eq]){
+      const c=S.counts[eq];
+      document.getElementById('tmpl-'+eq+'-count').textContent=c>1?`(${c} units)`:'(1 unit)';
+    }
+  });
+  showScreen('tmpl-screen');
+}
+
+function setTmplType(eq,val,btn){
+  S.tmplTypes[eq]=val;
+  btn.parentElement.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+// ── BUILD UNITS FROM TEMPLATES ──
+function mkUnit(eq,n){
+  const t=getTmpl(eq);
+  const checks=CHECKS[eq].map(()=>({done:false,flagged:false,note:'',photos:[]}));
+  return Object.assign({eq,n,sn:'',checks,photos:[],unitComments:''},t);
+}
+
+function getTmpl(eq){
+  if(eq==='door') return{
+    mfr:document.getElementById('t-door-mfr').value,
+    model:document.getElementById('t-door-model').value,
+    op:document.getElementById('t-door-op').value,
+    opmodel:document.getElementById('t-door-opmodel').value,
+    type:S.tmplTypes.door||'sectional'
+  };
+  if(eq==='leveler') return{
+    mfr:document.getElementById('t-leveler-mfr').value,
+    model:document.getElementById('t-leveler-model').value,
+    cap:document.getElementById('t-leveler-cap').value,
+    volt:document.getElementById('t-leveler-volt').value,
+    type:S.tmplTypes.leveler||'mechanical'
+  };
+  return{
+    mfr:document.getElementById('t-restraint-mfr').value,
+    model:document.getElementById('t-restraint-model').value
+  };
+}
+
+function startInspection(){
+  S.units=[];
+  S.cursor=0;
+  ['door','leveler','restraint'].forEach(eq=>{
+    if(!S.active[eq])return;
+    for(let n=1;n<=S.counts[eq];n++) S.units.push(mkUnit(eq,n));
+  });
+  if(!S.units.length)return;
+  buildAllCards();
+  buildProgress();
+  updateBottomBar();
+  showScreen('insp-screen');
+}
+
+// ── CARD RENDERING ──
+function buildAllCards(){
+  const area=document.getElementById('swipe-area');
+  area.innerHTML='';
+  S.units.forEach((_,i)=>{
+    const div=document.createElement('div');
+    div.className='unit-card '+(i===0?'center':'right');
+    div.id='card-'+i;
+    div.innerHTML=buildCardHTML(i);
+    area.appendChild(div);
+  });
+}
+
+function buildCardHTML(i){
+  const u=S.units[i];
+  const eq=u.eq;
+  const multi=S.counts[eq]>1;
+  const unitLabel=multi?`${META[eq].label} #${u.n}`:META[eq].label;
+
+  // template summary (read-only display with edit link)
+  let tmplSummary='<div class="tmpl-summary">';
+  tmplSummary+=`<div class="tmpl-summary-row">Make <span>${u.mfr||'—'}</span></div>`;
+  tmplSummary+=`<div class="tmpl-summary-row">Model <span>${u.model||'—'}</span></div>`;
+  if(eq==='door'){
+    tmplSummary+=`<div class="tmpl-summary-row">Operator <span>${u.op||'—'}</span></div>`;
+    tmplSummary+=`<div class="tmpl-summary-row">Type <span>${u.type==='sectional'?'Sectional':'Rolling steel'}</span></div>`;
+  }
+  if(eq==='leveler'){
+    tmplSummary+=`<div class="tmpl-summary-row">Type <span>${u.type.charAt(0).toUpperCase()+u.type.slice(1)}</span></div>`;
+    tmplSummary+=`<div class="tmpl-summary-row">Capacity <span>${u.cap||'—'}</span></div>`;
+    tmplSummary+=`<div class="tmpl-summary-row">Voltage <span>${u.volt||'—'}</span></div>`;
+  }
+  tmplSummary+='</div>';
+
+  const allDone=u.checks.every(c=>c.done);
+
+  const checkItems=u.checks.map((chk,ci)=>`
+    <div class="ci${chk.flagged?' ci-flagged':''}" id="ci-${i}-${ci}">
+      <div class="ci-check" onclick="toggleCheck(${i},${ci})">
+        <div class="ci-box${chk.done?' done':''}"><span class="ci-mark">✓</span></div>
+      </div>
+      <div class="ci-body">
+        <div class="ci-text">${CHECKS[eq][ci]}</div>
+        <div class="ci-actions">
+          <button class="ci-action${chk.flagged?' flagged':''}" onclick="toggleFlag(${i},${ci})">${chk.flagged?'⚠ Flagged':'Flag issue'}</button>
+          <button class="ci-action" onclick="addPhoto(${i},${ci})">📷 Photo${chk.photos.length?` (${chk.photos.length})`:''}</button>
+        </div>
+        ${chk.flagged?`<input class="ci-note-input" type="text" placeholder="Describe the issue..." value="${chk.note.replace(/"/g,'&quot;')}" oninput="S.units[${i}].checks[${ci}].note=this.value">`:``}
+        ${chk.photos.length?`<div class="ci-photos">${chk.photos.map((p,pi)=>`<div class="ci-photo-wrap"><img class="ci-photo" src="${p}"><div class="ci-photo-del" onclick="delPhoto(${i},${ci},${pi})">×</div></div>`).join('')}</div>`:``}
+      </div>
+    </div>`).join('');
+
+  const isLast=i===S.units.length-1;
+
+  return`
+    <div class="detail-card">
+      <div class="detail-card-header">
+        <span>${unitLabel}</span>
+        <span class="edit-tmpl-link" onclick="showScreen('tmpl-screen')">Edit defaults</span>
+      </div>
+      ${tmplSummary}
+      <div class="sn-row">
+        <span class="sn-label">Serial #</span>
+        <input class="sn-input" type="text" placeholder="Tap to enter SN" value="${u.sn}" oninput="S.units[${i}].sn=this.value" autocomplete="off">
+      </div>
+    </div>
+    <div class="checklist-card">
+      <div class="checklist-header">
+        <span class="checklist-title">Checklist</span>
+        <button class="mark-all-btn${allDone?' undo':''}" onclick="markAll(${i})">${allDone?'Undo all':'Mark all done'}</button>
+      </div>
+      <div class="checklist-items">${checkItems}</div>
+    </div>
+    <div class="detail-card">
+      <div class="detail-card-header">Notes / parts / recommendations</div>
+      <div style="padding:10px 14px">
+        <textarea style="width:100%;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:14px;font-family:inherit;resize:none;min-height:80px;color:var(--text);outline:none;background:var(--surface)" placeholder="Parts needed, recommendations, observations for this unit..." oninput="S.units[${i}].unitComments=this.value">${u.unitComments||''}</textarea>
+      </div>
+    </div>`;
+}
+
+function refreshCard(i){
+  const card=document.getElementById('card-'+i);
+  if(card) card.innerHTML=buildCardHTML(i);
+}
+
+// ── CHECKLIST ACTIONS ──
+function toggleCheck(i,ci){S.units[i].checks[ci].done=!S.units[i].checks[ci].done;refreshCard(i);updateBottomBar();}
+function toggleFlag(i,ci){
+  const chk=S.units[i].checks[ci];
+  chk.flagged=!chk.flagged;
+  if(!chk.flagged)chk.note='';
+  refreshCard(i);
+}
+function markAll(i){
+  const allDone=S.units[i].checks.every(c=>c.done);
+  S.units[i].checks.forEach(c=>c.done=!allDone);
+  refreshCard(i);
+  updateBottomBar();
+}
+function addPhoto(i,ci){
+  const inp=document.createElement('input');
+  inp.type='file';inp.accept='image/*';inp.capture='environment';inp.multiple=true;
+  inp.onchange=e=>{
+    Array.from(e.target.files).forEach(f=>{
+      const r=new FileReader();
+      r.onload=ev=>{S.units[i].checks[ci].photos.push(ev.target.result);refreshCard(i);};
+      r.readAsDataURL(f);
+    });
+  };inp.click();
+}
+function delPhoto(i,ci,pi){S.units[i].checks[ci].photos.splice(pi,1);refreshCard(i);}
+
+// ── NAVIGATION ──
+function positionCards(){
+  S.units.forEach((_,i)=>{
+    const c=document.getElementById('card-'+i);
+    if(!c)return;
+    c.classList.remove('left','center','right');
+    c.classList.add(i<S.cursor?'left':i===S.cursor?'center':'right');
+  });
+}
+function navigate(dir){
+  const next=S.cursor+dir;
+  if(next<0||next>=S.units.length)return;
+  S.cursor=next;
+  positionCards();buildProgress();updateBottomBar();
+}
+function buildProgress(){
+  document.getElementById('progress-row').innerHTML=S.units.map((_,i)=>`<div class="progress-dot${i<S.cursor?' done':i===S.cursor?' active':''}"></div>`).join('');
+  const u=S.units[S.cursor];
+  document.getElementById('insp-counter').textContent=`Unit ${S.cursor+1} of ${S.units.length}`;
+  document.getElementById('insp-title').textContent=S.counts[u.eq]>1?`${META[u.eq].label} #${u.n}`:META[u.eq].label;
+}
+function updateBottomBar(){
+  document.getElementById('btn-prev').disabled=S.cursor===0;
+  const isLast=S.cursor===S.units.length-1;
+  document.getElementById('btn-next').disabled=isLast;
+  const btn=document.getElementById('btn-main');
+  if(isLast){btn.textContent='Generate report';btn.className='center-action finish';}
+  else{
+    const allDone=S.units[S.cursor].checks.every(c=>c.done);
+    btn.textContent=allDone?'Next →':'Mark all done';
+    btn.className='center-action';
+  }
+}
+function mainAction(){
+  if(S.cursor===S.units.length-1){buildReport();return;}
+  const allDone=S.units[S.cursor].checks.every(c=>c.done);
+  if(!allDone){markAll(S.cursor);}
+  else{navigate(1);}
+  updateBottomBar();
+}
+
+// swipe
+let tx0=0;
+document.getElementById('swipe-area').addEventListener('touchstart',e=>{tx0=e.touches[0].clientX;},{passive:true});
+document.getElementById('swipe-area').addEventListener('touchend',e=>{
+  const dx=tx0-e.changedTouches[0].clientX;
+  if(Math.abs(dx)>50)navigate(dx>0?1:-1);
+},{passive:true});
+
+// ── REPORT ──
+function buildReport(){
+  const customer=document.getElementById('f-customer').value||'—';
+  const so=document.getElementById('f-so').value||'—';
+  const tech=document.getElementById('f-tech').value||'—';
+  const date=document.getElementById('f-date').value||'—';
+
+  let eqHTML='';
+  S.units.forEach(u=>{
+    const eq=u.eq;
+    const multi=S.counts[eq]>1;
+    const title=multi?`${META[eq].label} #${u.n}`:META[eq].label;
+    let details=`
+      <div class="rdr"><span class="rdl">Manufacturer</span>${u.mfr||'—'}</div>
+      <div class="rdr"><span class="rdl">Model</span>${u.model||'—'}</div>
+      <div class="rdr"><span class="rdl">Serial #</span>${u.sn||'—'}</div>`;
+    if(eq==='door') details+=`<div class="rdr"><span class="rdl">Operator</span>${u.op||'—'}</div><div class="rdr"><span class="rdl">Op. model</span>${u.opmodel||'—'}</div><div class="rdr"><span class="rdl">Type</span>${u.type==='sectional'?'Sectional':'Rolling steel'}</div>`;
+    if(eq==='leveler') details+=`<div class="rdr"><span class="rdl">Type</span>${u.type.charAt(0).toUpperCase()+u.type.slice(1)}</div><div class="rdr"><span class="rdl">Capacity</span>${u.cap||'—'}</div><div class="rdr"><span class="rdl">Voltage</span>${u.volt||'—'}</div>`;
+    const checks=u.checks.map((chk,ci)=>{
+      const icon=chk.flagged?'<span class="s-flag">⚠</span>':chk.done?'<span class="s-done">✓</span>':'<span class="s-skip">—</span>';
+      const photos=chk.photos.length?`<div class="rck-photos">${chk.photos.map(p=>`<img class="rck-photo" src="${p}">`).join('')}</div>`:'';
+      return`<div class="rck"><div class="rck-icon">${icon}</div><div class="rck-body">${CHECKS[eq][ci]}${chk.note?`<div class="rck-note">${chk.note}</div>`:''}${photos}</div></div>`;
+    }).join('');
+    const unitNotes=u.unitComments?`<div class="rck" style="background:#fffbea"><div class="rck-icon">📝</div><div class="rck-body" style="color:#555;font-style:italic">${u.unitComments}</div></div>`:'';
+    eqHTML+=`<div class="report-eq"><div class="report-eq-title">${META[eq].emoji} ${title}</div>${details}${checks}${unitNotes}</div>`;
+  });
+
+  document.getElementById('report-inner').innerHTML=`
+    <div style="padding-top:16px">
+    <div class="report-header-block">
+      <div class="report-co">Southern Dock Products</div>
+      <div class="report-co-sub">a division of DuraServ Corp · Preventive Maintenance Report</div>
+      <div class="report-meta">
+        <div class="rmi"><strong>${customer}</strong>Customer</div>
+        <div class="rmi"><strong>${so}</strong>SO#</div>
+        <div class="rmi"><strong>${tech}</strong>Technician</div>
+        <div class="rmi"><strong>${date}</strong>Date</div>
+      </div>
+    </div>
+    ${eqHTML}
+
+    <div class="sig-row">
+      <div class="sig-box"><div class="sig-line"></div><div class="sig-label">Technician</div></div>
+      <div class="sig-box"><div class="sig-line"></div><div class="sig-label">Customer</div></div>
+    </div>
+    <button class="btn-primary" onclick="printReport()" style="margin-bottom:8px">📄 Print / Save PDF</button>
+    <button class="btn-secondary" onclick="showScreen('insp-screen')">← Back to inspection</button>
+    <div style="height:20px"></div>
+    </div>`;
+
+  showScreen('report-screen');
+}
+
+function printReport(){
+  const customer=document.getElementById('f-customer').value||'Inspection';
+  const content=document.getElementById('report-inner').innerHTML;
+  const w=window.open('','_blank');
+  if(!w){alert('Allow popups to open the print view.');return;}
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>PMP — ${customer}</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;font-size:12px;color:#1a1a1a;background:#fff;padding:24px 28px}
+    .report-header-block{border:1px solid #ccc;border-radius:6px;padding:14px;margin-bottom:14px}
+    .report-co{font-size:16px;font-weight:700;color:#003366}.report-co-sub{font-size:11px;color:#888;margin-top:2px;margin-bottom:10px}
+    .report-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .rmi{font-size:12px;color:#555}.rmi strong{color:#1a1a1a;display:block;font-size:14px}
+    .report-eq{border:1px solid #ccc;border-radius:6px;margin-bottom:12px;overflow:hidden;page-break-inside:avoid}
+    .report-eq-title{background:#003366;color:#fff;padding:8px 12px;font-size:13px;font-weight:700}
+    .rdr{display:flex;padding:5px 12px;border-bottom:1px solid #eee;font-size:12px}.rdl{color:#888;width:110px;flex-shrink:0}
+    .rck{padding:6px 12px;border-bottom:1px solid #eee;font-size:11px;display:flex;align-items:flex-start;gap:8px}.rck:last-child{border-bottom:none}
+    .rck-icon{flex-shrink:0;width:14px}.rck-body{flex:1}
+    .rck-note{color:#c0392b;font-size:10px;margin-top:2px;font-style:italic}
+    .rck-photos{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.rck-photo{width:64px;height:64px;object-fit:cover;border-radius:3px;border:1px solid #ccc}
+    .s-done{color:#1a7a3a;font-weight:700}.s-flag{color:#c0392b;font-weight:700}.s-skip{color:#bbb}
+    .report-comments{border:1px solid #ccc;border-radius:6px;padding:12px;margin-bottom:12px}
+    .rc-label{font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}.rc-text{font-size:12px;color:#555;line-height:1.5}
+    .sig-row{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:20px}.sig-box{text-align:center}
+    .sig-line{height:44px;border-bottom:1px solid #999;margin-bottom:6px}.sig-label{font-size:10px;color:#888}
+    button{display:none}
+  </style></head><body>${content}</body></html>`);
+  w.document.close();setTimeout(()=>w.print(),400);
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// auto-fill date
+const t=new Date();
+document.getElementById('f-date').value=`${String(t.getMonth()+1).padStart(2,'0')}/${String(t.getDate()).padStart(2,'0')}/${t.getFullYear()}`;
+</script>
+</body>
+</html>
