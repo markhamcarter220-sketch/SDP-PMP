@@ -13,6 +13,7 @@
   --text:#0F172A;--text2:#64748B;--radius:12px;--radius-sm:8px;--radius-pill:24px;
   --shadow:0 1px 3px rgba(0,0,0,.08);--shadow-up:0 -2px 8px rgba(0,0,0,.06);
   --yellow-bg:#FFFBEB;--pill-bg:#F1F5F9;--checkbox-border:#CBD5E1;
+  --amber:#CA8A04;--orange:#EA580C;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;background:var(--surface);font-family:system-ui,-apple-system,sans-serif;color:var(--text)}
@@ -88,6 +89,12 @@ select.field-input{font-size:14px;color:var(--text2)}
 .sn-label{font-size:12px;color:var(--gray);width:86px;flex-shrink:0}
 .sn-input{flex:1;border:none;background:transparent;font-size:15px;color:var(--text);font-family:inherit;padding:0;outline:none;min-width:0}
 .sn-input::placeholder{color:#cbd5e1}
+.condition-row{display:flex;gap:6px;padding:12px 14px}
+.condition-btn{flex:1;padding:10px 2px;border:none;background:var(--pill-bg);color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;border-radius:var(--radius-sm);text-align:center;line-height:1.25}
+.condition-btn.sel-good{background:var(--green);color:var(--white)}
+.condition-btn.sel-fair{background:var(--amber);color:var(--white)}
+.condition-btn.sel-attention{background:var(--orange);color:var(--white)}
+.condition-btn.sel-safety{background:var(--red);color:var(--white)}
 .tmpl-summary{padding:10px 14px}
 .tmpl-summary-row{font-size:13px;color:var(--text2);display:flex;justify-content:space-between;gap:6px;padding:4px 0}
 .tmpl-summary-row span{color:var(--text);font-weight:600}
@@ -128,34 +135,69 @@ select.field-input{font-size:14px;color:var(--text2)}
 /* ── REPORT SCREEN ── */
 #report-screen{background:var(--surface)}
 .report-inner{padding:16px 16px 24px}
-.report-header-block{background:var(--white);border-radius:var(--radius);border:none;box-shadow:var(--shadow);padding:16px;margin-bottom:12px}
-.report-co{font-size:17px;font-weight:700;color:var(--blue)}
-.report-co-sub{font-size:11px;color:var(--gray);margin-top:2px;margin-bottom:12px}
-.report-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.rmi{font-size:11px;color:var(--text2)}.rmi strong{color:var(--text);font-weight:500;display:block;font-size:14px}
-.report-eq{background:var(--white);border-radius:var(--radius);border:none;box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden}
-.report-eq-title{background:var(--blue);color:var(--white);padding:10px 14px;font-size:14px;font-weight:700}
-.rdr{display:flex;padding:6px 14px;border-bottom:1px solid var(--border);font-size:12px}
-.rdr:nth-of-type(even){background:var(--surface)}
-.rdr:last-of-type{border-bottom:none}
-.rdl{color:var(--gray);width:100px;flex-shrink:0}
-.rck{padding:7px 14px;border-bottom:1px solid var(--border);font-size:12px;display:flex;align-items:flex-start;gap:8px}
+.report-header-block{background:var(--white);border-radius:var(--radius);border:none;box-shadow:var(--shadow);padding:16px;margin-bottom:16px}
+.rep-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.rep-co-name{font-size:18px;font-weight:700;color:var(--blue)}
+.rep-co-sub{font-size:11px;color:var(--gray);margin-top:2px}
+.rep-doc-title{font-size:12px;color:var(--blue);font-weight:600;margin-top:6px}
+.rep-logo-box{width:48px;height:48px;background:var(--blue);border-radius:8px;color:var(--white);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rep-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rep-meta-box{background:var(--surface);border-radius:var(--radius-sm);padding:8px 10px;display:flex;flex-direction:column;gap:2px}
+.rmb-label{font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:.05em}
+.rmb-val{font-size:14px;color:var(--text);font-weight:600}
+
+.rep-section-title{font-size:14px;font-weight:700;color:var(--blue);margin:18px 2px 8px}
+.rep-section-title.danger{color:var(--red)}
+
+.scorecard{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:4px}
+.scorecard-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px;border-bottom:1px solid var(--border)}
+.scorecard-row:last-child{border-bottom:none}
+.sc-name{font-size:14px;font-weight:600;color:var(--text);flex:1;min-width:0}
+.sc-count{font-size:11px;color:var(--gray);flex-shrink:0}
+
+.cond-badge{display:inline-block;padding:4px 10px;border-radius:var(--radius-pill);font-size:11px;font-weight:700;color:var(--white);flex-shrink:0}
+.cond-badge.none{background:var(--pill-bg);color:var(--text2);font-weight:600}
+.cond-badge.good{background:var(--green)}
+.cond-badge.fair{background:var(--amber)}
+.cond-badge.attention{background:var(--orange)}
+.cond-badge.safety{background:var(--red)}
+
+.findings-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:4px;border-left:4px solid var(--red)}
+.finding-item{padding:14px;border-bottom:1px solid var(--border)}
+.finding-item:last-child{border-bottom:none}
+.finding-head{font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.finding-text{font-size:13px;color:var(--text);line-height:1.4}
+.finding-note{font-size:12px;color:var(--red);font-style:italic;margin-top:4px}
+.finding-photos{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.finding-photo{width:120px;height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--border)}
+
+.unit-detail-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:12px}
+.unit-detail-title{background:var(--blue);color:var(--white);padding:12px 14px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.udg-row{display:grid;grid-template-columns:1fr 1fr;padding:7px 14px;gap:8px}
+.udg-row.alt{background:var(--surface)}
+.udg-cell{display:flex;flex-direction:column;gap:1px;min-width:0}
+.udg-label{font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:.04em}
+.udg-val{font-size:13px;color:var(--text);font-weight:500;overflow-wrap:anywhere}
+.unit-checklist{border-top:1px solid var(--border)}
+.rck{padding:8px 14px;border-bottom:1px solid var(--border);font-size:12px;display:flex;align-items:flex-start;gap:8px}
 .rck:last-child{border-bottom:none}
 .rck-icon{flex-shrink:0;width:16px;margin-top:1px}
 .rck-body{flex:1}
 .rck-note{color:var(--red);font-size:11px;margin-top:2px;font-style:italic}
-.rck-photos{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
-.rck-photo{width:52px;height:52px;object-fit:cover;border-radius:4px;border:1px solid var(--border)}
+.rck-photos{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.rck-photo{width:80px;height:80px;object-fit:cover;border-radius:6px;border:1px solid var(--border)}
 .s-done{color:var(--green);font-weight:700}
 .s-flag{color:var(--red);font-weight:700}
-.s-skip{color:#bbb}
-.report-comments{background:var(--white);border-radius:var(--radius);border:none;box-shadow:var(--shadow);padding:14px;margin-bottom:12px}
-.rc-label{font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
-.rc-text{font-size:13px;color:var(--text2);line-height:1.5}
-.sig-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.s-skip{color:var(--checkbox-border);font-weight:700}
+.unit-notes-box{background:var(--yellow-bg);padding:10px 14px;font-size:12px;color:var(--text);line-height:1.5;font-style:italic;border-top:1px solid var(--border)}
+.unb-label{font-weight:700;font-style:normal;color:var(--gray);text-transform:uppercase;font-size:10px;letter-spacing:.04em;margin-right:4px}
+
+.sig-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0 14px}
 .sig-box{background:var(--white);border-radius:var(--radius);border:none;box-shadow:var(--shadow);padding:12px;text-align:center}
 .sig-line{height:44px;border-bottom:1px solid var(--border);margin-bottom:6px}
 .sig-label{font-size:11px;color:var(--gray)}
+.rep-footer-line{font-size:11px;color:var(--gray);text-align:center;margin-top:4px}
+.rep-fine-print{font-size:10px;color:var(--gray);text-align:center;margin-top:8px;line-height:1.5;padding:0 8px}
 </style>
 </head>
 <body>
@@ -345,7 +387,7 @@ function setTmplType(eq,val,btn){
 function mkUnit(eq,n){
   const t=getTmpl(eq);
   const checks=CHECKS[eq].map(()=>({done:false,flagged:false,note:'',photos:[]}));
-  return Object.assign({eq,n,sn:'',checks,photos:[],unitComments:''},t);
+  return Object.assign({eq,n,sn:'',condition:'',checks,photos:[],unitComments:''},t);
 }
 
 function getTmpl(eq){
@@ -449,6 +491,15 @@ function buildCardHTML(i){
         <input class="sn-input" type="text" placeholder="Tap to enter SN" value="${u.sn}" oninput="S.units[${i}].sn=this.value" autocomplete="off">
       </div>
     </div>
+    <div class="detail-card">
+      <div class="detail-card-header">Condition rating</div>
+      <div class="condition-row">
+        <button class="condition-btn${u.condition==='good'?' sel-good':''}" onclick="setCondition(${i},'good')">Good</button>
+        <button class="condition-btn${u.condition==='fair'?' sel-fair':''}" onclick="setCondition(${i},'fair')">Fair</button>
+        <button class="condition-btn${u.condition==='attention'?' sel-attention':''}" onclick="setCondition(${i},'attention')">Needs Attention</button>
+        <button class="condition-btn${u.condition==='safety'?' sel-safety':''}" onclick="setCondition(${i},'safety')">Safety Concern</button>
+      </div>
+    </div>
     <div class="checklist-card">
       <div class="checklist-header">
         <span class="checklist-title">Checklist</span>
@@ -495,6 +546,7 @@ function addPhoto(i,ci){
   };inp.click();
 }
 function delPhoto(i,ci,pi){S.units[i].checks[ci].photos.splice(pi,1);refreshCard(i);}
+function setCondition(i,val){S.units[i].condition=val;refreshCard(i);}
 
 // ── NAVIGATION ──
 function positionCards(){
@@ -546,51 +598,135 @@ document.getElementById('swipe-area').addEventListener('touchend',e=>{
 },{passive:true});
 
 // ── REPORT ──
+const CONDITION_META={
+  good:{label:'Good',cls:'good'},
+  fair:{label:'Fair',cls:'fair'},
+  attention:{label:'Needs Attention',cls:'attention'},
+  safety:{label:'Safety Concern',cls:'safety'}
+};
+function condBadgeHTML(cond){
+  const m=CONDITION_META[cond];
+  return m?`<span class="cond-badge ${m.cls}">${m.label}</span>`:`<span class="cond-badge none">Not rated</span>`;
+}
+function unitDetailRows(u){
+  const eq=u.eq;
+  const rows=[['Manufacturer',u.mfr||'—'],['Model',u.model||'—'],['Serial #',u.sn||'—']];
+  if(eq==='door') rows.push(['Operator',u.op||'—'],['Op. model',u.opmodel||'—'],['Type',u.type==='sectional'?'Sectional':'Rolling steel']);
+  if(eq==='leveler') rows.push(['Type',u.type.charAt(0).toUpperCase()+u.type.slice(1)],['Capacity',u.cap||'—'],['Voltage',u.volt||'—']);
+  return rows;
+}
 function buildReport(){
   const customer=document.getElementById('f-customer').value||'—';
   const so=document.getElementById('f-so').value||'—';
   const tech=document.getElementById('f-tech').value||'—';
   const date=document.getElementById('f-date').value||'—';
+  const year=new Date().getFullYear();
 
-  let eqHTML='';
+  // 2 — equipment condition scorecard
+  let scoreHTML='';
+  S.units.forEach(u=>{
+    const multi=S.counts[u.eq]>1;
+    const title=multi?`${META[u.eq].label} #${u.n}`:META[u.eq].label;
+    const findingCount=u.checks.filter(c=>c.flagged).length;
+    scoreHTML+=`<div class="scorecard-row">
+      <span class="sc-name">${META[u.eq].emoji} ${title}</span>
+      ${condBadgeHTML(u.condition)}
+      <span class="sc-count">${findingCount?`${findingCount} finding${findingCount>1?'s':''}`:'No findings'}</span>
+    </div>`;
+  });
+
+  // 3 — findings requiring attention
+  const findings=[];
+  S.units.forEach(u=>{
+    const multi=S.counts[u.eq]>1;
+    const title=multi?`${META[u.eq].label} #${u.n}`:META[u.eq].label;
+    u.checks.forEach((chk,ci)=>{
+      if(chk.flagged) findings.push({title,eq:u.eq,text:CHECKS[u.eq][ci],note:chk.note,photos:chk.photos});
+    });
+  });
+  let findingsHTML='';
+  if(findings.length){
+    findingsHTML=`
+    <div class="rep-section-title danger">Findings Requiring Attention</div>
+    <div class="findings-card">
+      ${findings.map(f=>`
+        <div class="finding-item">
+          <div class="finding-head">${META[f.eq].emoji} ${f.title}</div>
+          <div class="finding-text">${f.text}</div>
+          ${f.note?`<div class="finding-note">${f.note}</div>`:''}
+          ${f.photos.length?`<div class="finding-photos">${f.photos.map(p=>`<img class="finding-photo" src="${p}">`).join('')}</div>`:''}
+        </div>`).join('')}
+    </div>`;
+  }
+
+  // 4 — full inspection detail
+  let detailHTML='';
   S.units.forEach(u=>{
     const eq=u.eq;
     const multi=S.counts[eq]>1;
     const title=multi?`${META[eq].label} #${u.n}`:META[eq].label;
-    let details=`
-      <div class="rdr"><span class="rdl">Manufacturer</span>${u.mfr||'—'}</div>
-      <div class="rdr"><span class="rdl">Model</span>${u.model||'—'}</div>
-      <div class="rdr"><span class="rdl">Serial #</span>${u.sn||'—'}</div>`;
-    if(eq==='door') details+=`<div class="rdr"><span class="rdl">Operator</span>${u.op||'—'}</div><div class="rdr"><span class="rdl">Op. model</span>${u.opmodel||'—'}</div><div class="rdr"><span class="rdl">Type</span>${u.type==='sectional'?'Sectional':'Rolling steel'}</div>`;
-    if(eq==='leveler') details+=`<div class="rdr"><span class="rdl">Type</span>${u.type.charAt(0).toUpperCase()+u.type.slice(1)}</div><div class="rdr"><span class="rdl">Capacity</span>${u.cap||'—'}</div><div class="rdr"><span class="rdl">Voltage</span>${u.volt||'—'}</div>`;
-    const checks=u.checks.map((chk,ci)=>{
+    const rows=unitDetailRows(u);
+    let gridHTML='';
+    for(let r=0;r<rows.length;r+=2){
+      const alt=((r/2)%2===1);
+      gridHTML+=`<div class="udg-row${alt?' alt':''}">
+        <div class="udg-cell"><span class="udg-label">${rows[r][0]}</span><span class="udg-val">${rows[r][1]}</span></div>
+        ${rows[r+1]?`<div class="udg-cell"><span class="udg-label">${rows[r+1][0]}</span><span class="udg-val">${rows[r+1][1]}</span></div>`:'<div class="udg-cell"></div>'}
+      </div>`;
+    }
+    const checklist=u.checks.map((chk,ci)=>{
       const icon=chk.flagged?'<span class="s-flag">⚠</span>':chk.done?'<span class="s-done">✓</span>':'<span class="s-skip">—</span>';
       const photos=chk.photos.length?`<div class="rck-photos">${chk.photos.map(p=>`<img class="rck-photo" src="${p}">`).join('')}</div>`:'';
-      return`<div class="rck"><div class="rck-icon">${icon}</div><div class="rck-body">${CHECKS[eq][ci]}${chk.note?`<div class="rck-note">${chk.note}</div>`:''}${photos}</div></div>`;
+      return`<div class="rck"><div class="rck-icon">${icon}</div><div class="rck-body">${CHECKS[eq][ci]}${chk.flagged&&chk.note?`<div class="rck-note">${chk.note}</div>`:''}${photos}</div></div>`;
     }).join('');
-    const unitNotes=u.unitComments?`<div class="rck" style="background:#fffbea"><div class="rck-icon">📝</div><div class="rck-body" style="color:#555;font-style:italic">${u.unitComments}</div></div>`:'';
-    eqHTML+=`<div class="report-eq"><div class="report-eq-title">${META[eq].emoji} ${title}</div>${details}${checks}${unitNotes}</div>`;
+    const notesHTML=u.unitComments?`<div class="unit-notes-box"><span class="unb-label">Tech notes:</span>${u.unitComments}</div>`:'';
+    detailHTML+=`
+    <div class="unit-detail-card">
+      <div class="unit-detail-title">
+        <span>${META[eq].emoji} ${title}</span>
+        ${condBadgeHTML(u.condition)}
+      </div>
+      <div class="udg">${gridHTML}</div>
+      <div class="unit-checklist">${checklist}</div>
+      ${notesHTML}
+    </div>`;
   });
 
   document.getElementById('report-inner').innerHTML=`
     <div style="padding-top:16px">
     <div class="report-header-block">
-      <div class="report-co">Southern Dock Products</div>
-      <div class="report-co-sub">a division of DuraServ Corp · Preventive Maintenance Report</div>
-      <div class="report-meta">
-        <div class="rmi"><strong>${customer}</strong>Customer</div>
-        <div class="rmi"><strong>${so}</strong>SO#</div>
-        <div class="rmi"><strong>${tech}</strong>Technician</div>
-        <div class="rmi"><strong>${date}</strong>Date</div>
+      <div class="rep-header">
+        <div class="rep-header-left">
+          <div class="rep-co-name">Southern Dock Products</div>
+          <div class="rep-co-sub">a division of DuraServ Corp</div>
+          <div class="rep-doc-title">Preventive Maintenance Inspection Report</div>
+        </div>
+        <div class="rep-logo-box">SDP</div>
+      </div>
+      <div class="rep-meta-grid">
+        <div class="rep-meta-box"><span class="rmb-label">Customer</span><span class="rmb-val">${customer}</span></div>
+        <div class="rep-meta-box"><span class="rmb-label">SO#</span><span class="rmb-val">${so}</span></div>
+        <div class="rep-meta-box"><span class="rmb-label">Technician</span><span class="rmb-val">${tech}</span></div>
+        <div class="rep-meta-box"><span class="rmb-label">Date</span><span class="rmb-val">${date}</span></div>
       </div>
     </div>
-    ${eqHTML}
+
+    <div class="rep-section-title">Equipment Condition Summary</div>
+    <div class="scorecard">${scoreHTML}</div>
+
+    ${findingsHTML}
+
+    <div class="rep-section-title">Full Inspection Detail</div>
+    ${detailHTML}
 
     <div class="sig-row">
-      <div class="sig-box"><div class="sig-line"></div><div class="sig-label">Technician</div></div>
-      <div class="sig-box"><div class="sig-line"></div><div class="sig-label">Customer</div></div>
+      <div class="sig-box"><div class="sig-line"></div><div class="sig-label">Technician Signature</div></div>
+      <div class="sig-box"><div class="sig-line"></div><div class="sig-label">Customer Acknowledgment</div></div>
     </div>
-    <button class="btn-primary" onclick="printReport()" style="margin-bottom:8px">📄 Print / Save PDF</button>
+    <div class="rep-footer-line">Southern Dock Products · ${year} · For service scheduling contact your SDP representative</div>
+    <div class="rep-fine-print">This report documents equipment condition at time of inspection. Southern Dock Products recommends addressing all findings rated Needs Attention or Safety Concern promptly.</div>
+
+    <button class="btn-primary" onclick="printReport()" style="margin-top:16px;margin-bottom:8px">📄 Print / Save PDF</button>
     <button class="btn-secondary" onclick="showScreen('insp-screen')">← Back to inspection</button>
     <div style="height:20px"></div>
     </div>`;
@@ -605,23 +741,70 @@ function printReport(){
   if(!w){alert('Allow popups to open the print view.');return;}
   w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>PMP — ${customer}</title>
   <style>
-    *{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;font-size:12px;color:#0F172A;background:#fff;padding:24px 28px}
-    .report-header-block{border:1px solid #E2E8F0;border-radius:6px;padding:14px;margin-bottom:14px}
-    .report-co{font-size:16px;font-weight:700;color:#003366}.report-co-sub{font-size:11px;color:#64748B;margin-top:2px;margin-bottom:10px}
-    .report-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .rmi{font-size:12px;color:#64748B}.rmi strong{color:#0F172A;display:block;font-size:14px;font-weight:500}
-    .report-eq{border:1px solid #E2E8F0;border-radius:6px;margin-bottom:12px;overflow:hidden;page-break-inside:avoid}
-    .report-eq-title{background:#003366;color:#fff;padding:8px 12px;font-size:13px;font-weight:700}
-    .rdr{display:flex;padding:5px 12px;border-bottom:1px solid #E2E8F0;font-size:12px}.rdr:nth-of-type(even){background:#F8FAFC}.rdl{color:#64748B;width:110px;flex-shrink:0}
-    .rck{padding:6px 12px;border-bottom:1px solid #E2E8F0;font-size:11px;display:flex;align-items:flex-start;gap:8px}.rck:last-child{border-bottom:none}
-    .rck-icon{flex-shrink:0;width:14px}.rck-body{flex:1}
-    .rck-note{color:#DC2626;font-size:10px;margin-top:2px;font-style:italic}
-    .rck-photos{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.rck-photo{width:64px;height:64px;object-fit:cover;border-radius:3px;border:1px solid #E2E8F0}
-    .s-done{color:#16A34A;font-weight:700}.s-flag{color:#DC2626;font-weight:700}.s-skip{color:#CBD5E1}
-    .report-comments{border:1px solid #E2E8F0;border-radius:6px;padding:12px;margin-bottom:12px}
-    .rc-label{font-size:10px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}.rc-text{font-size:12px;color:#64748B;line-height:1.5}
-    .sig-row{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:20px}.sig-box{text-align:center}
-    .sig-line{height:44px;border-bottom:1px solid #CBD5E1;margin-bottom:6px}.sig-label{font-size:10px;color:#64748B}
+    :root{
+      --blue:#003366;--red:#DC2626;--green:#16A34A;--amber:#CA8A04;--orange:#EA580C;
+      --gray:#64748B;--border:#E2E8F0;--surface:#F8FAFC;--white:#fff;--text:#0F172A;
+      --yellow-bg:#FFFBEB;--pill-bg:#F1F5F9;--checkbox-border:#CBD5E1;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    body{font-family:Arial,sans-serif;font-size:12px;color:var(--text);background:#fff;padding:20px 28px}
+    .report-header-block{border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:14px}
+    .rep-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+    .rep-co-name{font-size:18px;font-weight:700;color:var(--blue)}
+    .rep-co-sub{font-size:11px;color:var(--gray);margin-top:2px}
+    .rep-doc-title{font-size:12px;color:var(--blue);font-weight:600;margin-top:6px}
+    .rep-logo-box{width:48px;height:48px;background:var(--blue);border-radius:8px;color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .rep-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .rep-meta-box{background:var(--surface);border-radius:6px;padding:8px 10px;display:flex;flex-direction:column;gap:2px;border:1px solid var(--border)}
+    .rmb-label{font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:.05em}
+    .rmb-val{font-size:14px;color:var(--text);font-weight:600}
+    .rep-section-title{font-size:14px;font-weight:700;color:var(--blue);margin:16px 2px 8px;page-break-after:avoid}
+    .rep-section-title.danger{color:var(--red);page-break-before:auto}
+    .scorecard{border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:4px}
+    .scorecard-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border)}
+    .scorecard-row:last-child{border-bottom:none}
+    .sc-name{font-size:13px;font-weight:600;color:var(--text);flex:1;min-width:0}
+    .sc-count{font-size:11px;color:var(--gray);flex-shrink:0}
+    .cond-badge{display:inline-block;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+    .cond-badge.none{background:var(--pill-bg);color:var(--gray);font-weight:600}
+    .cond-badge.good{background:var(--green)}
+    .cond-badge.fair{background:var(--amber)}
+    .cond-badge.attention{background:var(--orange)}
+    .cond-badge.safety{background:var(--red)}
+    .findings-card{border:1px solid var(--border);border-left:4px solid var(--red);border-radius:6px;overflow:hidden;margin-bottom:4px}
+    .finding-item{padding:12px 14px;border-bottom:1px solid var(--border);page-break-inside:avoid}
+    .finding-item:last-child{border-bottom:none}
+    .finding-head{font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+    .finding-text{font-size:13px;color:var(--text);line-height:1.4}
+    .finding-note{font-size:12px;color:var(--red);font-style:italic;margin-top:4px}
+    .finding-photos{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    .finding-photo{width:120px;height:120px;object-fit:cover;border-radius:6px;border:1px solid var(--border)}
+    .unit-detail-card{border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:12px;page-break-inside:avoid}
+    .unit-detail-title{background:var(--blue);color:#fff;padding:10px 14px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .udg-row{display:grid;grid-template-columns:1fr 1fr;padding:6px 14px;gap:8px}
+    .udg-row.alt{background:var(--surface)}
+    .udg-cell{display:flex;flex-direction:column;gap:1px;min-width:0}
+    .udg-label{font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:.04em}
+    .udg-val{font-size:12px;color:var(--text);font-weight:500;overflow-wrap:anywhere}
+    .unit-checklist{border-top:1px solid var(--border)}
+    .rck{padding:6px 14px;border-bottom:1px solid var(--border);font-size:11px;display:flex;align-items:flex-start;gap:8px}
+    .rck:last-child{border-bottom:none}
+    .rck-icon{flex-shrink:0;width:14px;margin-top:1px}
+    .rck-body{flex:1}
+    .rck-note{color:var(--red);font-size:10px;margin-top:2px;font-style:italic}
+    .rck-photos{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+    .rck-photo{width:80px;height:80px;object-fit:cover;border-radius:4px;border:1px solid var(--border)}
+    .s-done{color:var(--green);font-weight:700}
+    .s-flag{color:var(--red);font-weight:700}
+    .s-skip{color:var(--checkbox-border);font-weight:700}
+    .unit-notes-box{background:var(--yellow-bg);padding:8px 14px;font-size:11px;color:var(--text);line-height:1.5;font-style:italic;border-top:1px solid var(--border)}
+    .unb-label{font-weight:700;font-style:normal;color:var(--gray);text-transform:uppercase;font-size:9px;letter-spacing:.04em;margin-right:4px}
+    .sig-row{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:20px 0 14px;page-break-inside:avoid}
+    .sig-box{text-align:center}
+    .sig-line{height:44px;border-bottom:1px solid var(--checkbox-border);margin-bottom:6px}
+    .sig-label{font-size:10px;color:var(--gray)}
+    .rep-footer-line{font-size:10px;color:var(--gray);text-align:center;margin-top:4px}
+    .rep-fine-print{font-size:9px;color:var(--gray);text-align:center;margin-top:8px;line-height:1.5;padding:0 8px}
     button{display:none}
   </style></head><body>${content}</body></html>`);
   w.document.close();setTimeout(()=>w.print(),400);
