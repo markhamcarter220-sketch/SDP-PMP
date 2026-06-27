@@ -284,6 +284,8 @@ select.field-input{font-size:14px;color:var(--text2)}
           <div class="field-row"><span class="field-label">Model</span><input class="field-input" id="t-door-model" type="text" placeholder="Model number" autocomplete="off"></div>
           <div class="field-row"><span class="field-label">Operator</span><input class="field-input" id="t-door-op" type="text" placeholder="e.g. LiftMaster" autocomplete="off"></div>
           <div class="field-row"><span class="field-label">Op. model</span><input class="field-input" id="t-door-opmodel" type="text" placeholder="Operator model" autocomplete="off"></div>
+          <div class="field-row"><span class="field-label">Width</span><input class="field-input" id="t-door-width" type="text" placeholder="e.g. 8'" autocomplete="off"></div>
+          <div class="field-row"><span class="field-label">Height</span><input class="field-input" id="t-door-height" type="text" placeholder="e.g. 10'" autocomplete="off"></div>
           <div class="type-row" id="t-door-type-row">
             <button class="type-btn on" onclick="setTmplType('door','sectional',this)">Sectional</button>
             <button class="type-btn" onclick="setTmplType('door','rolling',this)">Rolling steel</button>
@@ -298,6 +300,9 @@ select.field-input{font-size:14px;color:var(--text2)}
           <div class="field-row"><span class="field-label">Manufacturer</span><input class="field-input" id="t-leveler-mfr" type="text" placeholder="e.g. Serco, Rite Hite, Kelly" autocomplete="off"></div>
           <div class="field-row"><span class="field-label">Model</span><input class="field-input" id="t-leveler-model" type="text" placeholder="Model number" autocomplete="off"></div>
           <div class="field-row"><span class="field-label">Capacity</span><input class="field-input" id="t-leveler-cap" type="text" placeholder="e.g. 30,000 lbs" autocomplete="off"></div>
+          <div class="field-row"><span class="field-label">Width</span><input class="field-input" id="t-leveler-width" type="text" placeholder="e.g. 7'" autocomplete="off"></div>
+          <div class="field-row"><span class="field-label">Length</span><input class="field-input" id="t-leveler-length" type="text" placeholder="e.g. 8'" autocomplete="off"></div>
+          <div class="field-row"><span class="field-label">Pit Depth</span><input class="field-input" id="t-leveler-pitdepth" type="text" placeholder="e.g. 18&quot;" autocomplete="off"></div>
           <div class="field-row">
             <span class="field-label">Voltage</span>
             <select class="field-input" id="t-leveler-volt">
@@ -397,12 +402,17 @@ function getTmpl(eq){
     model:document.getElementById('t-door-model').value,
     op:document.getElementById('t-door-op').value,
     opmodel:document.getElementById('t-door-opmodel').value,
+    width:document.getElementById('t-door-width').value,
+    height:document.getElementById('t-door-height').value,
     type:S.tmplTypes.door||'sectional'
   };
   if(eq==='leveler') return{
     mfr:document.getElementById('t-leveler-mfr').value,
     model:document.getElementById('t-leveler-model').value,
     cap:document.getElementById('t-leveler-cap').value,
+    width:document.getElementById('t-leveler-width').value,
+    length:document.getElementById('t-leveler-length').value,
+    pitDepth:document.getElementById('t-leveler-pitdepth').value,
     volt:document.getElementById('t-leveler-volt').value,
     type:S.tmplTypes.leveler||'mechanical'
   };
@@ -462,11 +472,16 @@ function eqSectionHTML(i,eq){
   if(eq==='door'){
     tmplSummary+=`<div class="tmpl-summary-row">Operator <span>${u.op||'—'}</span></div>`;
     tmplSummary+=`<div class="tmpl-summary-row">Type <span>${u.type==='sectional'?'Sectional':'Rolling steel'}</span></div>`;
+    tmplSummary+=`<div class="tmpl-summary-row">Width <span>${u.width||'—'}</span></div>`;
+    tmplSummary+=`<div class="tmpl-summary-row">Height <span>${u.height||'—'}</span></div>`;
   }
   if(eq==='leveler'){
     tmplSummary+=`<div class="tmpl-summary-row">Type <span>${u.type.charAt(0).toUpperCase()+u.type.slice(1)}</span></div>`;
     tmplSummary+=`<div class="tmpl-summary-row">Capacity <span>${u.cap||'—'}</span></div>`;
     tmplSummary+=`<div class="tmpl-summary-row">Voltage <span>${u.volt||'—'}</span></div>`;
+    tmplSummary+=`<div class="tmpl-summary-row">Width <span>${u.width||'—'}</span></div>`;
+    tmplSummary+=`<div class="tmpl-summary-row">Length <span>${u.length||'—'}</span></div>`;
+    tmplSummary+=`<div class="tmpl-summary-row">Pit Depth <span>${u.pitDepth||'—'}</span></div>`;
   }
   tmplSummary+='</div>';
 
@@ -668,8 +683,8 @@ function condBadgeHTML(cond){
 function unitDetailRows(u){
   const eq=u.eq;
   const rows=[['Manufacturer',u.mfr||'—'],['Model',u.model||'—'],['Serial #',u.sn||'—']];
-  if(eq==='door') rows.push(['Operator',u.op||'—'],['Op. model',u.opmodel||'—'],['Type',u.type==='sectional'?'Sectional':'Rolling steel']);
-  if(eq==='leveler') rows.push(['Type',u.type.charAt(0).toUpperCase()+u.type.slice(1)],['Capacity',u.cap||'—'],['Voltage',u.volt||'—']);
+  if(eq==='door') rows.push(['Operator',u.op||'—'],['Op. model',u.opmodel||'—'],['Type',u.type==='sectional'?'Sectional':'Rolling steel'],['Width',u.width||'—'],['Height',u.height||'—']);
+  if(eq==='leveler') rows.push(['Type',u.type.charAt(0).toUpperCase()+u.type.slice(1)],['Capacity',u.cap||'—'],['Voltage',u.volt||'—'],['Width',u.width||'—'],['Length',u.length||'—'],['Pit Depth',u.pitDepth||'—']);
   return rows;
 }
 function buildReport(){
