@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-<title>SDP Field Inspection</title>
+<title>Loading Dock PM Field Inspection</title>
 <style>
 :root{
   --blue:#003366;--accent:#2563EB;--blue-light:#EFF6FF;--blue-mid:#2563EB;
@@ -236,8 +236,8 @@ select.field-input{font-size:14px;color:var(--text2)}
   <div class="scroll-body">
     <div class="job-inner">
       <div class="sdp-logo">
-        <div class="name">Southern Dock Products</div>
-        <div class="sub">Field Inspection · a division of DuraServ Corp</div>
+        <div class="name">Loading Dock PM</div>
+        <div class="sub">Field Inspection</div>
       </div>
 
       <div class="section-label">Job info</div>
@@ -801,11 +801,10 @@ function buildReport(){
     <div class="report-header-block">
       <div class="rep-header">
         <div class="rep-header-left">
-          <div class="rep-co-name">Southern Dock Products</div>
-          <div class="rep-co-sub">a division of DuraServ Corp</div>
+          <div class="rep-co-name">Loading Dock PM</div>
           <div class="rep-doc-title">Preventive Maintenance Inspection Report</div>
         </div>
-        <div class="rep-logo-box">SDP</div>
+        <div class="rep-logo-box">LDP</div>
       </div>
       <div class="rep-meta-grid">
         <div class="rep-meta-box"><span class="rmb-label">Customer</span><span class="rmb-val">${customer}</span></div>
@@ -827,8 +826,8 @@ function buildReport(){
       <div class="sig-box"><div class="sig-line"></div><div class="sig-label">Technician Signature</div></div>
       <div class="sig-box"><div class="sig-line"></div><div class="sig-label">Customer Acknowledgment</div></div>
     </div>
-    <div class="rep-footer-line">Southern Dock Products · ${year} · For service scheduling contact your SDP representative</div>
-    <div class="rep-fine-print">This report documents equipment condition at time of inspection. Southern Dock Products recommends addressing all findings rated Needs Attention or Safety Concern promptly.</div>
+    <div class="rep-footer-line">Loading Dock PM · ${year} · For service scheduling contact your representative</div>
+    <div class="rep-fine-print">This report documents equipment condition at time of inspection. Loading Dock PM recommends addressing all findings rated Needs Attention or Safety Concern promptly.</div>
 
     <button class="btn-primary" onclick="printReport()" style="margin-top:16px;margin-bottom:8px">📄 Print / Save PDF</button>
     <button class="btn-secondary" onclick="showScreen('insp-screen')">← Back to inspection</button>
