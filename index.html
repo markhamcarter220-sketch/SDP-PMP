@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <title>Loading Dock PM Field Inspection</title>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 :root{
   --blue:#003366;--accent:#2563EB;--blue-light:#EFF6FF;--blue-mid:#2563EB;
@@ -34,6 +35,8 @@ select.field-input{font-size:14px;color:var(--text2)}
 .btn-primary:active{opacity:.85}
 .btn-secondary{width:100%;padding:15px;background:transparent;color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:15px;cursor:pointer;font-family:inherit;margin-top:8px}
 .btn-secondary:active{opacity:.7}
+.btn-email{width:100%;padding:16px;background:var(--accent);color:var(--white);border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:8px}
+.btn-email:active{opacity:.85}
 .type-row{padding:10px 14px;display:flex;gap:6px}
 .type-btn{flex:1;padding:9px 4px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--white);font-size:13px;cursor:pointer;font-family:inherit;color:var(--text2)}
 .type-btn.on{background:var(--accent);color:var(--white);border-color:var(--accent)}
@@ -227,6 +230,36 @@ select.field-input{font-size:14px;color:var(--text2)}
 .sig-label{font-size:11px;color:var(--gray)}
 .rep-footer-line{font-size:11px;color:var(--gray);text-align:center;margin-top:4px}
 .rep-fine-print{font-size:10px;color:var(--gray);text-align:center;margin-top:8px;line-height:1.5;padding:0 8px}
+
+/* ── EMAIL SHEET ── */
+.email-sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .2s;z-index:200;display:flex;align-items:flex-end}
+.email-sheet-overlay.active{opacity:1;pointer-events:all}
+.email-sheet{width:100%;max-height:80vh;background:var(--white);border-radius:16px 16px 0 0;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch;transform:translateY(100%);transition:transform .25s ease}
+.email-sheet-overlay.active .email-sheet{transform:translateY(0)}
+.es-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
+.es-title{font-size:16px;font-weight:700;color:var(--text)}
+.es-subtitle{font-size:13px;color:var(--gray);margin-top:2px}
+.es-close{background:none;border:none;font-size:22px;line-height:1;color:var(--gray);cursor:pointer;padding:2px 4px;font-family:inherit}
+.es-option{display:flex;align-items:center;gap:12px;height:64px;border-radius:var(--radius-sm);cursor:pointer;padding:0 6px}
+.es-option:active{background:var(--surface)}
+.es-option-icon{width:40px;height:40px;border-radius:50%;background:var(--blue-light);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.es-option-text{flex:1;min-width:0}
+.es-option-title{font-size:15px;color:var(--text);font-weight:600}
+.es-option-sub{font-size:12px;color:var(--gray);margin-top:2px}
+.es-option-arrow{font-size:16px;color:var(--gray);flex-shrink:0}
+.es-divider{display:flex;align-items:center;gap:10px;color:var(--gray);font-size:11px;margin:14px 0}
+.es-divider::before,.es-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.es-label{font-size:12px;color:var(--gray);margin-bottom:6px;font-weight:600}
+.es-input{width:100%;height:48px;padding:0 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:15px;font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:6px}
+.es-input:focus{border-color:var(--accent)}
+.es-hint{font-size:11px;color:var(--gray);line-height:1.4;margin-bottom:12px}
+.es-error{display:none;font-size:12px;color:var(--red);margin-bottom:10px}
+.es-send-btn{width:100%;height:48px;background:var(--accent);color:var(--white);border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+.es-send-btn:disabled{opacity:.6;cursor:default}
+.es-notice{font-size:11px;color:var(--gray);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 10px;margin-top:10px;line-height:1.4}
+.es-success{display:none;flex-direction:column;align-items:center;gap:10px;padding:30px 0}
+.es-success-icon{width:48px;height:48px;border-radius:50%;background:var(--green-light);color:var(--green);font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.es-success-text{font-size:14px;color:var(--text);font-weight:600;text-align:center}
 </style>
 </head>
 <body>
@@ -359,7 +392,50 @@ select.field-input{font-size:14px;color:var(--text2)}
   </div>
 </div>
 
+<!-- ══════════ EMAIL OPTIONS BOTTOM SHEET ══════════ -->
+<div class="email-sheet-overlay" id="email-sheet-overlay" onclick="if(event.target===this)closeEmailSheet()">
+  <div class="email-sheet" id="email-sheet">
+    <div class="es-header">
+      <div>
+        <div class="es-title">Email Report</div>
+        <div class="es-subtitle">Choose how to send</div>
+      </div>
+      <button class="es-close" onclick="closeEmailSheet()">&times;</button>
+    </div>
+
+    <div id="es-body">
+      <div class="es-option" onclick="openInMailApp()">
+        <div class="es-option-icon">✉️</div>
+        <div class="es-option-text">
+          <div class="es-option-title">Open in Mail App</div>
+          <div class="es-option-sub">Opens your default email app</div>
+        </div>
+        <div class="es-option-arrow">→</div>
+      </div>
+
+      <div class="es-divider">or send directly</div>
+
+      <div class="es-label">Recipient email address</div>
+      <input class="es-input" id="es-email" type="email" placeholder="customer@example.com" autocomplete="off">
+      <div class="es-hint">A text email with inspection summary will be sent. Attach the PDF separately from your mail app.</div>
+      <div class="es-error" id="es-error"></div>
+      <button class="es-send-btn" id="es-send-btn" onclick="sendViaEmailJS()">Send Email</button>
+      <div class="es-notice">⚙️ Email sending requires EmailJS setup. See README for configuration instructions.</div>
+    </div>
+
+    <div class="es-success" id="es-success">
+      <div class="es-success-icon">✓</div>
+      <div class="es-success-text" id="es-success-text"></div>
+    </div>
+  </div>
+</div>
+
 <script>
+const EMAILJS_SERVICE_ID='YOUR_SERVICE_ID';
+const EMAILJS_TEMPLATE_ID='YOUR_TEMPLATE_ID';
+const EMAILJS_PUBLIC_KEY='YOUR_PUBLIC_KEY';
+if(typeof emailjs!=='undefined') emailjs.init({publicKey:EMAILJS_PUBLIC_KEY});
+
 const CHECKS={
   door:["Inspect and adjust spring tension, drums, hinges, cables, door track","Lubricate rollers, tracks, slide locks, and springs","Inspect door sections and weather seal for damage","Retighten any loose screws and fasteners","Inspection of guides, curtain, spring"],
   leveler:["Complete safety inspection — welds, springs, chains, assemblies, safety legs, cross beams, lip keepers","Clean debris and dirt under leveler in pit","Adjust springs if needed","Lubricate and grease all parts — hinges, springs, hold down assembly","Top off hydraulic fluid"],
@@ -829,7 +905,8 @@ function buildReport(){
     <div class="rep-footer-line">Loading Dock PM · ${year} · For service scheduling contact your representative</div>
     <div class="rep-fine-print">This report documents equipment condition at time of inspection. Loading Dock PM recommends addressing all findings rated Needs Attention or Safety Concern promptly.</div>
 
-    <button class="btn-primary" onclick="printReport()" style="margin-top:16px;margin-bottom:8px">📄 Print / Save PDF</button>
+    <button class="btn-primary" onclick="printReport()" style="margin-top:16px;margin-bottom:0;border-radius:12px">📄 Print / Save PDF</button>
+    <button class="btn-email" onclick="openEmailSheet()">✉️ Email Report</button>
     <button class="btn-secondary" onclick="showScreen('insp-screen')">← Back to inspection</button>
     <div style="height:20px"></div>
     </div>`;
@@ -918,6 +995,111 @@ function printReport(){
     button{display:none}
   </style></head><body>${content}</body></html>`);
   w.document.close();setTimeout(()=>w.print(),400);
+}
+
+function gatherReportData(){
+  const customer=document.getElementById('f-customer').value||'—';
+  const so=document.getElementById('f-so').value||'—';
+  const tech=document.getElementById('f-tech').value||'—';
+  const date=document.getElementById('f-date').value||'—';
+  const conditionLines=S.positions.map(pos=>`${pos.label}: ${CONDITION_META[pos.condition]?CONDITION_META[pos.condition].label:'Not rated'}`);
+  const findingLines=[];
+  S.positions.forEach(pos=>{
+    pos.equipment.forEach(eq=>{
+      pos[eq].checks.forEach((chk,ci)=>{
+        if(chk.flagged) findingLines.push(`${pos.label} – ${META[eq].label}: ${CHECKS[eq][ci]}${chk.note?` (${chk.note})`:''}`);
+      });
+    });
+  });
+  const notesLines=S.positions.filter(p=>p.unitComments).map(p=>`${p.label}: ${p.unitComments}`);
+  return {customer,so,tech,date,conditionLines,findingLines,notesLines};
+}
+
+function openEmailSheet(){
+  document.getElementById('es-email').value='';
+  const errorEl=document.getElementById('es-error');
+  errorEl.style.display='none';
+  errorEl.textContent='';
+  document.getElementById('es-body').style.display='';
+  document.getElementById('es-success').style.display='none';
+  const btn=document.getElementById('es-send-btn');
+  btn.disabled=false;
+  btn.textContent='Send Email';
+  document.getElementById('email-sheet-overlay').classList.add('active');
+}
+
+function closeEmailSheet(){
+  document.getElementById('email-sheet-overlay').classList.remove('active');
+}
+
+function openInMailApp(){
+  const d=gatherReportData();
+  const subject=`PMP Inspection Report — ${d.customer} — ${d.date}`;
+  let body='';
+  body+=`Customer: ${d.customer}\n`;
+  body+=`SO#: ${d.so}\n`;
+  body+=`Technician: ${d.tech}\n`;
+  body+=`Date: ${d.date}\n\n`;
+  body+=`POSITION CONDITIONS\n`;
+  body+=(d.conditionLines.length?d.conditionLines.join('\n'):'No positions recorded')+'\n\n';
+  body+=`FLAGGED FINDINGS\n`;
+  body+=(d.findingLines.length?d.findingLines.join('\n'):'No findings flagged')+'\n\n';
+  if(d.notesLines.length) body+=`TECH NOTES\n${d.notesLines.join('\n')}\n\n`;
+  body+=`Full PDF report attached.\n`;
+  body+=`Note: Attach the PDF report for full photo documentation.\n\n`;
+  body+=`Generated by Loading Dock PM Field Inspection App`;
+  window.location.href=`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+function sendViaEmailJS(){
+  const emailInput=document.getElementById('es-email');
+  const email=emailInput.value.trim();
+  const errorEl=document.getElementById('es-error');
+  const emailRe=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!email||!emailRe.test(email)){
+    errorEl.textContent='Please enter a valid email address';
+    errorEl.style.display='block';
+    return;
+  }
+  errorEl.style.display='none';
+  errorEl.textContent='';
+
+  const d=gatherReportData();
+  const templateParams={
+    to_email:email,
+    customer_name:d.customer,
+    so_number:d.so,
+    tech_name:d.tech,
+    inspection_date:d.date,
+    position_count:S.positions.length,
+    condition_summary:d.conditionLines.length?d.conditionLines.join('\n'):'No positions recorded',
+    findings_summary:d.findingLines.length?d.findingLines.join('\n'):'No findings flagged',
+    generated_by:'Loading Dock PM Field Inspection App'
+  };
+
+  const btn=document.getElementById('es-send-btn');
+  btn.disabled=true;
+  btn.textContent='Sending...';
+
+  if(typeof emailjs==='undefined'){
+    btn.disabled=false;
+    btn.textContent='Send Email';
+    errorEl.textContent='Failed to send. Try opening in your mail app instead.';
+    errorEl.style.display='block';
+    return;
+  }
+
+  emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,templateParams).then(()=>{
+    document.getElementById('es-body').style.display='none';
+    document.getElementById('es-success').style.display='flex';
+    document.getElementById('es-success-text').textContent=`Report sent to ${email}`;
+    setTimeout(closeEmailSheet,2500);
+  }).catch(()=>{
+    btn.disabled=false;
+    btn.textContent='Send Email';
+    errorEl.textContent='Failed to send. Try opening in your mail app instead.';
+    errorEl.style.display='block';
+  });
 }
 
 function showScreen(id){
