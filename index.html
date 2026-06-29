@@ -1048,7 +1048,7 @@ function openInMailApp(){
   const outlookLink=`ms-outlook://compose?subject=${encodedSubject}&body=${encodedBody}`;
   const mailtoLink=`mailto:?subject=${encodedSubject}&body=${encodedBody}`;
   window.location.href=outlookLink;
-  setTimeout(()=>{ window.location.href=mailtoLink; },500);
+  setTimeout(()=>{ if(!document.hidden) window.location.href=mailtoLink; },500);
 }
 
 function sendToEmail(){
@@ -1071,7 +1071,7 @@ function sendToEmail(){
   const outlookLink=`ms-outlook://compose?to=${encodedEmail}&subject=${encodedSubject}&body=${encodedBody}`;
   const mailtoLink=`mailto:${encodedEmail}?subject=${encodedSubject}&body=${encodedBody}`;
   window.location.href=outlookLink;
-  setTimeout(()=>{ window.location.href=mailtoLink; },500);
+  setTimeout(()=>{ if(!document.hidden) window.location.href=mailtoLink; },500);
 }
 
 function showScreen(id){
