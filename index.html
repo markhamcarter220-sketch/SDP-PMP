@@ -404,10 +404,10 @@ select.field-input{font-size:14px;color:var(--text2)}
 
     <div id="es-body">
       <div class="es-option" onclick="openInMailApp()">
-        <div class="es-option-icon">✉️</div>
+        <div class="es-option-icon">📧</div>
         <div class="es-option-text">
-          <div class="es-option-title">Open Mail App</div>
-          <div class="es-option-sub">Opens your mail app — you choose recipient</div>
+          <div class="es-option-title">Open Outlook</div>
+          <div class="es-option-sub">Opens Outlook app to send report</div>
         </div>
         <div class="es-option-arrow">→</div>
       </div>
@@ -415,7 +415,7 @@ select.field-input{font-size:14px;color:var(--text2)}
       <div class="es-divider">or pre-address to someone</div>
 
       <div class="es-option-title" style="margin-bottom:2px">Send to specific address</div>
-      <div class="es-option-sub" style="margin-bottom:12px">Enter email — opens mail app pre-addressed</div>
+      <div class="es-option-sub" style="margin-bottom:12px">Pre-addresses the email in Outlook</div>
       <input class="es-input" id="es-email" type="email" placeholder="customer@example.com" autocomplete="off">
       <div class="es-hint">Attach the PDF report separately from your mail app for full photo documentation.</div>
       <div class="es-error" id="es-error"></div>
@@ -1043,7 +1043,12 @@ function buildEmailContent(){
 
 function openInMailApp(){
   const {subject,body}=buildEmailContent();
-  window.location.href=`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  const encodedSubject=encodeURIComponent(subject);
+  const encodedBody=encodeURIComponent(body);
+  const outlookLink=`ms-outlook://compose?subject=${encodedSubject}&body=${encodedBody}`;
+  const mailtoLink=`mailto:?subject=${encodedSubject}&body=${encodedBody}`;
+  window.location.href=outlookLink;
+  setTimeout(()=>{ window.location.href=mailtoLink; },500);
 }
 
 function sendToEmail(){
@@ -1060,7 +1065,13 @@ function sendToEmail(){
   errorEl.textContent='';
 
   const {subject,body}=buildEmailContent();
-  window.location.href=`mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  const encodedEmail=encodeURIComponent(email);
+  const encodedSubject=encodeURIComponent(subject);
+  const encodedBody=encodeURIComponent(body);
+  const outlookLink=`ms-outlook://compose?to=${encodedEmail}&subject=${encodedSubject}&body=${encodedBody}`;
+  const mailtoLink=`mailto:${encodedEmail}?subject=${encodedSubject}&body=${encodedBody}`;
+  window.location.href=outlookLink;
+  setTimeout(()=>{ window.location.href=mailtoLink; },500);
 }
 
 function showScreen(id){
