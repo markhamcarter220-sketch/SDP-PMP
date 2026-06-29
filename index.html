@@ -470,7 +470,7 @@ function setTmplType(eq,val,btn){
 function mkEquipment(eq){
   const t=getTmpl(eq);
   const checks=CHECKS[eq].map(()=>({done:false,flagged:false,note:'',photos:[]}));
-  return Object.assign({eq,sn:'',checks},t);
+  return Object.assign({eq,sn:'',condition:'',checks},t);
 }
 
 function getTmpl(eq){
@@ -503,7 +503,7 @@ function startInspection(){
   S.positions=[];
   S.cursor=0;
   for(let n=1;n<=S.positionCount;n++){
-    S.positions.push({label:'Position '+n,equipment:[],door:null,leveler:null,restraint:null,condition:'',unitComments:''});
+    S.positions.push({label:'Position '+n,equipment:[],door:null,leveler:null,restraint:null,unitComments:''});
   }
   buildAllCards();
   buildProgress();
@@ -591,6 +591,13 @@ function eqSectionHTML(i,eq){
         <span class="sn-label">Serial #</span>
         <input class="sn-input" type="text" placeholder="Tap to enter SN" value="${u.sn}" oninput="S.positions[${i}].${eq}.sn=this.value" autocomplete="off">
       </div>
+      <div style="padding:10px 14px 0;font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.04em;border-top:1px solid var(--border)">${META[eq].label} condition</div>
+      <div class="condition-row">
+        <button class="condition-btn${u.condition==='good'?' sel-good':''}" onclick="setUnitCondition(${i},'${eq}','good')">Good</button>
+        <button class="condition-btn${u.condition==='fair'?' sel-fair':''}" onclick="setUnitCondition(${i},'${eq}','fair')">Fair</button>
+        <button class="condition-btn${u.condition==='attention'?' sel-attention':''}" onclick="setUnitCondition(${i},'${eq}','attention')">Needs Attention</button>
+        <button class="condition-btn${u.condition==='safety'?' sel-safety':''}" onclick="setUnitCondition(${i},'${eq}','safety')">Safety Concern</button>
+      </div>
     </div>
     <div class="checklist-card">
       <div class="checklist-header eqh-${eq}">
@@ -616,17 +623,6 @@ function buildCardHTML(i){
       ${pos.equipment.length===0?`<div class="eq-empty-hint">Tap an equipment type above to begin this position's inspection.</div>`:''}
     </div>`;
 
-  const conditionCard=`
-    <div class="detail-card">
-      <div class="detail-card-header">Condition rating</div>
-      <div class="condition-row">
-        <button class="condition-btn${pos.condition==='good'?' sel-good':''}" onclick="setPositionCondition(${i},'good')">Good</button>
-        <button class="condition-btn${pos.condition==='fair'?' sel-fair':''}" onclick="setPositionCondition(${i},'fair')">Fair</button>
-        <button class="condition-btn${pos.condition==='attention'?' sel-attention':''}" onclick="setPositionCondition(${i},'attention')">Needs Attention</button>
-        <button class="condition-btn${pos.condition==='safety'?' sel-safety':''}" onclick="setPositionCondition(${i},'safety')">Safety Concern</button>
-      </div>
-    </div>`;
-
   const eqSections=pos.equipment.map(eq=>eqSectionHTML(i,eq)).join('');
 
   const notesCard=`
@@ -637,7 +633,7 @@ function buildCardHTML(i){
       </div>
     </div>`;
 
-  return labelCard+conditionCard+eqSections+notesCard;
+  return labelCard+eqSections+notesCard;
 }
 
 function refreshCard(i){
@@ -701,7 +697,7 @@ function addPhoto(i,eq,ci){
   };inp.click();
 }
 function delPhoto(i,eq,ci,pi){S.positions[i][eq].checks[ci].photos.splice(pi,1);refreshCard(i);}
-function setPositionCondition(i,val){S.positions[i].condition=val;refreshCard(i);}
+function setUnitCondition(i,eq,val){S.positions[i][eq].condition=val;refreshCard(i);}
 
 // ── NAVIGATION ──
 function positionCards(){
@@ -796,17 +792,18 @@ function buildReport(){
   const date=document.getElementById('f-date').value||'—';
   const year=new Date().getFullYear();
 
-  // 2 — equipment condition scorecard, grouped by position
+  // 2 — equipment condition scorecard, one row per equipment unit
   let scoreHTML='';
   S.positions.forEach(pos=>{
-    const icons=pos.equipment.map(eq=>`<span class="sc-eq-icon ${eq}">${META[eq].emoji}</span>`).join('');
-    let findingCount=0;
-    pos.equipment.forEach(eq=>{findingCount+=pos[eq].checks.filter(c=>c.flagged).length;});
-    scoreHTML+=`<div class="scorecard-row">
-      <span class="sc-name">${pos.label}${icons?` <span class="sc-eq-icons">${icons}</span>`:''}</span>
-      ${condBadgeHTML(pos.condition)}
-      <span class="sc-count">${findingCount?`${findingCount} finding${findingCount>1?'s':''}`:'No findings'}</span>
-    </div>`;
+    pos.equipment.forEach(eq=>{
+      const u=pos[eq];
+      const findingCount=u.checks.filter(c=>c.flagged).length;
+      scoreHTML+=`<div class="scorecard-row">
+        <span class="sc-name">${pos.label} <span class="sc-eq-icons"><span class="sc-eq-icon ${eq}">${META[eq].emoji}</span></span> ${META[eq].label}</span>
+        ${condBadgeHTML(u.condition)}
+        <span class="sc-count">${findingCount?`${findingCount} finding${findingCount>1?'s':''}`:'No findings'}</span>
+      </div>`;
+    });
   });
 
   // 3 — findings requiring attention, grouped by position
@@ -856,7 +853,7 @@ function buildReport(){
         const photos=chk.photos.length?`<div class="rck-photos">${chk.photos.map(p=>`<img class="rck-photo" src="${p}">`).join('')}</div>`:'';
         return`<div class="rck"><div class="rck-icon">${icon}</div><div class="rck-body">${CHECKS[eq][ci]}${chk.flagged&&chk.note?`<div class="rck-note">${chk.note}</div>`:''}${photos}</div></div>`;
       }).join('');
-      bodyHTML+=`<div class="udg-eq-label">${META[eq].emoji} ${META[eq].label}</div>
+      bodyHTML+=`<div class="udg-eq-label" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span>${META[eq].emoji} ${META[eq].label}</span>${condBadgeHTML(u.condition)}</div>
         <div class="udg">${gridHTML}</div>
         <div class="unit-checklist">${checklist}</div>`;
     });
@@ -865,7 +862,6 @@ function buildReport(){
     <div class="unit-detail-card">
       <div class="unit-detail-title">
         <span>${pos.label}${icons?` <span class="sc-eq-icons">${icons}</span>`:''}</span>
-        ${condBadgeHTML(pos.condition)}
       </div>
       ${bodyHTML}
       ${notesHTML}
@@ -1002,7 +998,13 @@ function gatherReportData(){
   const so=document.getElementById('f-so').value||'—';
   const tech=document.getElementById('f-tech').value||'—';
   const date=document.getElementById('f-date').value||'—';
-  const conditionLines=S.positions.map(pos=>`${pos.label}: ${CONDITION_META[pos.condition]?CONDITION_META[pos.condition].label:'Not rated'}`);
+  const conditionLines=[];
+  S.positions.forEach(pos=>{
+    pos.equipment.forEach(eq=>{
+      const u=pos[eq];
+      conditionLines.push(`${pos.label} — ${META[eq].label}: ${CONDITION_META[u.condition]?CONDITION_META[u.condition].label:'Not rated'}`);
+    });
+  });
   const findingLines=[];
   S.positions.forEach(pos=>{
     pos.equipment.forEach(eq=>{
