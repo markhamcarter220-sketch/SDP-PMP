@@ -109,15 +109,18 @@ select.field-input{font-size:14px;color:var(--text2)}
 .eq-pill.sel-door{background:var(--blue);border-color:var(--blue);color:var(--white)}
 .eq-pill.sel-leveler{background:var(--accent);border-color:var(--accent);color:var(--white)}
 .eq-pill.sel-restraint{background:#7C3AED;border-color:#7C3AED;color:var(--white)}
+.eq-pill.sel-fan{background:#0D9488;border-color:#0D9488;color:var(--white)}
 .eq-empty-hint{font-size:12px;color:var(--gray);margin-top:10px;text-align:center;padding:8px;background:var(--surface);border-radius:var(--radius-sm)}
 
 /* per-equipment section header color variants */
 .detail-card-header.eqh-door{border-left-color:var(--blue);background:var(--blue-light);color:var(--blue)}
 .detail-card-header.eqh-leveler{border-left-color:var(--accent);background:var(--blue-light);color:var(--accent)}
 .detail-card-header.eqh-restraint{border-left-color:#7C3AED;background:#F5F3FF;color:#7C3AED}
+.detail-card-header.eqh-fan{border-left-color:#0D9488;background:#F0FDFA;color:#0D9488}
 .checklist-header.eqh-door{border-left:4px solid var(--blue)}
 .checklist-header.eqh-leveler{border-left:4px solid var(--accent)}
 .checklist-header.eqh-restraint{border-left:4px solid #7C3AED}
+.checklist-header.eqh-fan{border-left:4px solid #0D9488}
 .checklist-card{background:var(--white);border:none;box-shadow:var(--shadow);border-radius:var(--radius);margin-bottom:10px;overflow:hidden}
 .checklist-header{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
 .checklist-title{font-size:12px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.04em}
@@ -181,6 +184,7 @@ select.field-input{font-size:14px;color:var(--text2)}
 .sc-eq-icon.door{background:var(--blue)}
 .sc-eq-icon.leveler{background:var(--accent)}
 .sc-eq-icon.restraint{background:#7C3AED}
+.sc-eq-icon.fan{background:#0D9488}
 .finding-position-header{padding:10px 14px;background:var(--surface);font-size:12px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--border)}
 .udg-eq-label{padding:8px 14px;font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.04em;background:var(--surface);border-top:1px solid var(--border)}
 
@@ -327,6 +331,17 @@ select.field-input{font-size:14px;color:var(--text2)}
         </div>
       </div>
 
+      <!-- fan template -->
+      <div class="tmpl-eq-block" id="tmpl-fan-block">
+        <div class="tmpl-eq-label">🌀 HVLS Fan <span id="tmpl-fan-count" style="font-weight:400;color:var(--gray);font-size:12px"></span></div>
+        <div class="field-group">
+          <div class="field-row"><span class="field-label">Manufacturer</span><input class="field-input" id="t-fan-mfr" type="text" placeholder="e.g. Big Ass Fans, MacroAir" autocomplete="off"></div>
+          <div class="field-row"><span class="field-label">Model</span><input class="field-input" id="t-fan-model" type="text" placeholder="Model number" autocomplete="off"></div>
+          <div class="field-row"><span class="field-label">Mnt. Height</span><input class="field-input" id="t-fan-height" type="text" placeholder="e.g. 20'" autocomplete="off"></div>
+          <div class="field-row"><span class="field-label">Blade Span</span><input class="field-input" id="t-fan-span" type="text" placeholder="e.g. 24'" autocomplete="off"></div>
+        </div>
+      </div>
+
       <!-- restraint template -->
       <div class="tmpl-eq-block" id="tmpl-restraint-block">
         <div class="tmpl-eq-label">🔒 Truck restraint <span id="tmpl-restraint-count" style="font-weight:400;color:var(--gray);font-size:12px"></span></div>
@@ -378,9 +393,10 @@ select.field-input{font-size:14px;color:var(--text2)}
 const CHECKS={
   door:["Inspect and adjust spring tension, drums, hinges, cables, door track","Lubricate rollers, tracks, slide locks, and springs","Inspect door sections and weather seal for damage","Retighten any loose screws and fasteners","Inspection of guides, curtain, spring"],
   leveler:["Complete safety inspection — welds, springs, chains, assemblies, safety legs, cross beams, lip keepers","Clean debris and dirt under leveler in pit","Adjust springs if needed","Lubricate and grease all parts — hinges, springs, hold down assembly","Top off hydraulic fluid"],
-  restraint:["Complete safety inspection — pressure and communication light system","Lubricate rollers, tracks, slide locks, and springs","Re-tighten all screws and bolts","Adjust all necessary parts","Lubricate and grease all necessary parts"]
+  restraint:["Complete safety inspection — pressure and communication light system","Lubricate rollers, tracks, slide locks, and springs","Re-tighten all screws and bolts","Adjust all necessary parts","Lubricate and grease all necessary parts"],
+  fan:["Inspect the cable and check tension on guy wires","Inspect gearbox for oil leaks","Inspect blades for cracks, missing pieces, or damage","Check wiring connections","Check all fasteners for tightness","Inspect all brush seals and replace/recommend if needed","Check the full operation of the fan"]
 };
-const META={door:{label:'Door',emoji:'🚪'},leveler:{label:'Leveler',emoji:'⬆️'},restraint:{label:'Truck restraint',emoji:'🔒'}};
+const META={door:{label:'Door',emoji:'🚪'},leveler:{label:'Leveler',emoji:'⬆️'},restraint:{label:'Truck restraint',emoji:'🔒'},fan:{label:'HVLS Fan',emoji:'🌀'}};
 
 const S={
   positionCount:1,
@@ -433,6 +449,12 @@ function getTmpl(eq){
     volt:document.getElementById('t-leveler-volt').value,
     type:S.tmplTypes.leveler||'mechanical'
   };
+  if(eq==='fan') return{
+    mfr:document.getElementById('t-fan-mfr').value,
+    model:document.getElementById('t-fan-model').value,
+    mountingHeight:document.getElementById('t-fan-height').value,
+    bladeSpan:document.getElementById('t-fan-span').value
+  };
   return{
     mfr:document.getElementById('t-restraint-mfr').value,
     model:document.getElementById('t-restraint-model').value,
@@ -444,7 +466,7 @@ function startInspection(){
   S.positions=[];
   S.cursor=0;
   for(let n=1;n<=S.positionCount;n++){
-    S.positions.push({label:'Position '+n,equipment:[],door:null,leveler:null,restraint:null,unitComments:''});
+    S.positions.push({label:'Position '+n,equipment:[],door:null,leveler:null,restraint:null,fan:null,unitComments:''});
   }
   buildAllCards();
   buildProgress();
@@ -505,6 +527,10 @@ function eqSectionHTML(i,eq){
   if(eq==='restraint'){
     tmplSummary+=`<div class="tmpl-summary-row">Voltage <span>${u.volt||'—'}</span></div>`;
   }
+  if(eq==='fan'){
+    tmplSummary+=`<div class="tmpl-summary-row">Mnt. Height <span>${u.mountingHeight||'—'}</span></div>`;
+    tmplSummary+=`<div class="tmpl-summary-row">Blade Span <span>${u.bladeSpan||'—'}</span></div>`;
+  }
   tmplSummary+='</div>';
 
   const allDone=u.checks.every(c=>c.done);
@@ -556,7 +582,7 @@ function eqSectionHTML(i,eq){
 function buildCardHTML(i){
   const pos=S.positions[i];
 
-  const eqPills=['door','leveler','restraint'].map(eq=>{
+  const eqPills=['door','leveler','restraint','fan'].map(eq=>{
     const sel=pos.equipment.includes(eq);
     return `<button class="eq-pill${sel?' sel-'+eq:''}" onclick="toggleEquipment(${i},'${eq}')"><span class="eq-pill-icon">${META[eq].emoji}</span>${META[eq].label}</button>`;
   }).join('');
@@ -729,6 +755,7 @@ function unitDetailRows(u){
   if(eq==='door') rows.push(['Operator',u.op||'—'],['Op. model',u.opmodel||'—'],['Type',u.type==='sectional'?'Sectional':'Rolling steel'],['Op. Voltage',u.opVolt||'—'],['Width',u.width||'—'],['Height',u.height||'—']);
   if(eq==='leveler') rows.push(['Type',u.type.charAt(0).toUpperCase()+u.type.slice(1)],['Capacity',u.cap||'—'],['Voltage',u.volt||'—'],['Width',u.width||'—'],['Length',u.length||'—'],['Pit Depth',u.pitDepth||'—']);
   if(eq==='restraint') rows.push(['Voltage',u.volt||'—']);
+  if(eq==='fan') rows.push(['Mounting Height',u.mountingHeight||'—'],['Blade Span',u.bladeSpan||'—']);
   return rows;
 }
 function buildReport(){
@@ -891,6 +918,7 @@ function printReport(){
     .sc-eq-icon.door{background:var(--blue)}
     .sc-eq-icon.leveler{background:#2563EB}
     .sc-eq-icon.restraint{background:#7C3AED}
+    .sc-eq-icon.fan{background:#0D9488}
     .finding-position-header{padding:8px 14px;background:var(--surface);font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--border)}
     .udg-eq-label{padding:7px 14px;font-size:10px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.04em;background:var(--surface);border-top:1px solid var(--border)}
     .cond-badge{display:inline-block;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
