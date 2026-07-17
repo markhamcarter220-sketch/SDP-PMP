@@ -151,6 +151,8 @@ select.field-input{font-size:14px;color:var(--text2)}
 .nav-arrow{width:56px;height:56px;border-radius:50%;border:none;background:var(--pill-bg);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--blue);flex-shrink:0}
 .nav-arrow:disabled{color:var(--checkbox-border);cursor:default}
 .nav-arrow:active:not(:disabled){background:var(--blue-light)}
+.add-pos-btn{width:32px;height:32px;border-radius:50%;border:none;background:rgba(255,255,255,.2);color:var(--white);font-size:22px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.add-pos-btn:active{background:rgba(255,255,255,.35)}
 .center-action{flex:1;height:56px;border-radius:var(--radius);background:var(--blue);color:var(--white);border:none;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit}
 .center-action:active{opacity:.85}
 .center-action.finish{background:var(--green)}
@@ -369,6 +371,7 @@ select.field-input{font-size:14px;color:var(--text2)}
     <div class="insp-nav">
       <span class="nav-meta" id="insp-counter">Position 1 of 1</span>
       <input class="nav-title" id="insp-title" type="text" placeholder="Position label" oninput="setPositionLabel(S.cursor,this.value)" onchange="smartRenumber(S.cursor)" autocomplete="off">
+      <button class="add-pos-btn" onclick="addPosition()" title="Add position">+</button>
     </div>
     <div class="progress-row" id="progress-row"></div>
   </div>
@@ -472,6 +475,22 @@ function startInspection(){
   buildProgress();
   updateBottomBar();
   showScreen('insp-screen');
+}
+
+function addPosition(){
+  const n=S.positions.length+1;
+  S.positions.push({label:'Position '+n,equipment:[],door:null,leveler:null,restraint:null,fan:null,unitComments:''});
+  const newIdx=S.positions.length-1;
+  const area=document.getElementById('swipe-area');
+  const div=document.createElement('div');
+  div.className='unit-card right';
+  div.id='card-'+newIdx;
+  div.innerHTML=buildCardHTML(newIdx);
+  area.appendChild(div);
+  S.cursor=newIdx;
+  positionCards();
+  buildProgress();
+  updateBottomBar();
 }
 
 function toggleEquipment(posIdx,eq){
